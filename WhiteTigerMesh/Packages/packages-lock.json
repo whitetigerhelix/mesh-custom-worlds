@@ -1,23 +1,23 @@
 {
   "dependencies": {
     "com.microsoft.mesh.interactables.internal": {
-      "version": "file:com.microsoft.mesh.interactables.internal-5.2401.0.tgz",
+      "version": "file:com.microsoft.mesh.interactables.internal-5.2315.6.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.microsoft.mesh.toolkit.preview": "0.0.0"
+        "com.microsoft.mesh.toolkit": "0.0.0"
       }
     },
     "com.microsoft.mesh.playermodule.internal": {
-      "version": "file:com.microsoft.mesh.playermodule.internal-5.2401.0.tgz",
+      "version": "file:com.microsoft.mesh.playermodule.internal-5.2315.6.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.microsoft.mesh.toolkit.preview": "0.0.0"
+        "com.microsoft.mesh.toolkit": "0.0.0"
       }
     },
-    "com.microsoft.mesh.toolkit.preview": {
-      "version": "5.2401.0",
+    "com.microsoft.mesh.toolkit": {
+      "version": "5.2315.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
