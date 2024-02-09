@@ -1,5 +1,21 @@
 {
   "dependencies": {
+    "com.microsoft.mesh.interactables.internal": {
+      "version": "file:com.microsoft.mesh.interactables.internal-5.2401.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.microsoft.mesh.toolkit.preview": "5.2401.0"
+      }
+    },
+    "com.microsoft.mesh.playermodule.internal": {
+      "version": "file:com.microsoft.mesh.playermodule.internal-5.2401.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.microsoft.mesh.toolkit.preview": "5.2401.0"
+      }
+    },
     "com.microsoft.mesh.toolkit.preview": {
       "version": "5.2401.0",
       "depth": 0,
