@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.microsoft.mesh.toolkit.preview": "5.2401.0"
+        "com.microsoft.mesh.toolkit.preview": "0.0.0"
       }
     },
     "com.microsoft.mesh.playermodule.internal": {
@@ -13,7 +13,7 @@
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.microsoft.mesh.toolkit.preview": "5.2401.0"
+        "com.microsoft.mesh.toolkit.preview": "0.0.0"
       }
     },
     "com.microsoft.mesh.toolkit.preview": {
