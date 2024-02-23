@@ -1,0 +1,20 @@
+{
+  "uploadEntries": [
+    {
+      "assetId": "4b4c597c-ae37-4695-9076-1fd816768bb9",
+      "name": "WhiteTigerMesh",
+      "isEnabled": true,
+      "uploadItems": [
+        {
+          "prefabFilepath": "Assets/Scenes/WhiteTigerMesh.unity",
+          "forAndroid": true,
+          "forWin": true
+        }
+      ],
+      "perPlatformAssets": false,
+      "includeThumbnail": false,
+      "thumbnailGenerationBehavior": "Autogenerate",
+      "metaverseId": "e18ed7fc-6ead-4426-91fe-eeda687e94f5"
+    }
+  ]
+}

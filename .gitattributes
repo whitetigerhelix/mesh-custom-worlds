@@ -1,0 +1,60 @@
+# Git LFS images
+*.[tT][iI][fF][fF] filter=lfs diff=lfs merge=lfs -text
+*.[jJ][pP][eE][gG] filter=lfs diff=lfs merge=lfs -text
+*.[tT][gG][aA] filter=lfs diff=lfs merge=lfs -text
+*.[jJ][pP][gG] filter=lfs diff=lfs merge=lfs -text
+*.[pP][nN][gG] filter=lfs diff=lfs merge=lfs -text
+*.[dD][dD][sS] filter=lfs diff=lfs merge=lfs -text
+*.[eE][xX][rR] filter=lfs diff=lfs merge=lfs -text
+*.[pP][sS][dD] filter=lfs diff=lfs merge=lfs -text
+*.[tT][iI][fF] filter=lfs diff=lfs merge=lfs -text
+*.[bB][mM][pP] filter=lfs diff=lfs merge=lfs -text
+*.[gG][iI][fF] filter=lfs diff=lfs merge=lfs -text
+*.[sS][vV][gG] filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS Models
+*.[gG][lL][tT][fF] filter=lfs diff=lfs merge=lfs -text
+*.[aA][nN][iI][mM] filter=lfs diff=lfs merge=lfs -text
+*.[gG][lL][bB] filter=lfs diff=lfs merge=lfs -text
+*.[pP][lL][yY] filter=lfs diff=lfs merge=lfs -text
+*.[fF][bB][xX] filter=lfs diff=lfs merge=lfs -text
+*.[oO][bB][jJ] filter=lfs diff=lfs merge=lfs -text
+*.[mM][aA] filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS Code
+*.[eE][xX][eE] filter=lfs diff=lfs merge=lfs -text
+*.[dD][lL][lL] filter=lfs diff=lfs merge=lfs -text
+*.[pP][dD][bB] filter=lfs diff=lfs merge=lfs -text
+*.[lL][iI][bB] filter=lfs diff=lfs merge=lfs -text
+*.[sS][oO] filter=lfs diff=lfs merge=lfs -text
+*.[aA] filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS Audio / Video
+*.[wW][aA][vV] filter=lfs diff=lfs merge=lfs -text
+*.[wW][mM][vV] filter=lfs diff=lfs merge=lfs -text
+*.[mM][pP][gG] filter=lfs diff=lfs merge=lfs -text
+*.[mM][oO][vV] filter=lfs diff=lfs merge=lfs -text
+*.[vV][oO][xX] filter=lfs diff=lfs merge=lfs -text
+*.[mM][pP]4 filter=lfs diff=lfs merge=lfs -text
+*.[mM][pP]3 filter=lfs diff=lfs merge=lfs -text
+*.[mM]4[vV] filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS Others
+*.[bB][yY][tT][eE][sS] filter=lfs diff=lfs merge=lfs -text
+*.[mM][sS][iI] filter=lfs diff=lfs merge=lfs -text
+*.[zZ][iI][pP] filter=lfs diff=lfs merge=lfs -text
+*.[pP][dD][fF] filter=lfs diff=lfs merge=lfs -text
+*.[tT][aA][rR] filter=lfs diff=lfs merge=lfs -text
+*.[bB][iI][nN] filter=lfs diff=lfs merge=lfs -text
+*.[bB][nN][kK] filter=lfs diff=lfs merge=lfs -text
+*.[aA][cC][eE] filter=lfs diff=lfs merge=lfs -text
+*.[tT][gG][zZ] filter=lfs diff=lfs merge=lfs -text
+*.[aA][aA][rR] filter=lfs diff=lfs merge=lfs -text
+*.[rR][aA][rR] filter=lfs diff=lfs merge=lfs -text
+*.7[zZ] filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+
+# Asset files should not be in LFS
+*.asset -filter -merge -diff text
+
