@@ -74,3 +74,7 @@ crashlytics-build.properties
 # Mesh Toolkit
 /[Aa]ssets/[Mm]eshToolkit/Temp.meta
 /[Aa]ssets/[Mm]eshToolkit/Temp/*
+
+# extOSC fragments
+/extOSC/logs.xml
+
