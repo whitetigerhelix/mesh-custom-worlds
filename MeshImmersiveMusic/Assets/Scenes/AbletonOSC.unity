@@ -737,11 +737,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4391138997832181657, guid: 9104d8465f3faa4478e39a5249f8c610,
+        type: 3}
+      propertyPath: _localHost
+      value: 127.0.0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4391138997832181657, guid: 9104d8465f3faa4478e39a5249f8c610,
+        type: 3}
+      propertyPath: _localPort
+      value: 2346
+      objectReference: {fileID: 0}
+    - target: {fileID: 4391138997832181657, guid: 9104d8465f3faa4478e39a5249f8c610,
+        type: 3}
+      propertyPath: _localHostMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6873968267065711587, guid: 9104d8465f3faa4478e39a5249f8c610,
         type: 3}
       propertyPath: m_Name
       value: OSCManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8569515918913650548, guid: 9104d8465f3faa4478e39a5249f8c610,
+        type: 3}
+      propertyPath: _remotePort
+      value: 7099
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569515918913650548, guid: 9104d8465f3faa4478e39a5249f8c610,
+        type: 3}
+      propertyPath: _localReceiver
+      value: 
+      objectReference: {fileID: 117466123702227537}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
