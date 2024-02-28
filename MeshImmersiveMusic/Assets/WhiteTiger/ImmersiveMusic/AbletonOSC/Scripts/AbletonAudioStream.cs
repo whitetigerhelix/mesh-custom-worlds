@@ -76,7 +76,7 @@ namespace ImmersiveMusic
 
 //TODO: Refactor or move
         private readonly int sampleRate = 44100;
-        private static int clipLengthSecs = 30;
+        private static int clipLengthSecs = 300;
 
         public void InitializeAudioStream()
         {
