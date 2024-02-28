@@ -13,6 +13,12 @@ namespace ImmersiveMusic
 
         public bool IsPlaying => audioSource.isPlaying;
 
+        private void Start()
+        {
+//TODO: This needs to be set so the audio continues to play even when the app is not in focus (should move to a better place than here though)
+            Application.runInBackground = true;
+        }
+
         private void OnEnable()
         {
             InitializeAudioStream();
