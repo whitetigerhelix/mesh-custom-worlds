@@ -78,3 +78,22 @@ crashlytics-build.properties
 # extOSC fragments
 /extOSC/logs.xml
 
+# Azure Kinect Bodytracker Files
+/[Aa]ssets/Plugins
+/*.dll
+/*onnx
+
+# NuGet Packages
+*.nupkg
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+# Ignore stuff in Packages that is "restored"
+/[Pp]ackages/Microsoft.Azure.Kinect.BodyTracking.1.1.2/*
+/[Pp]ackages/Microsoft.Azure.Kinect.BodyTracking.ONNXRuntime.1.10.0/*
+/[Pp]ackages/Microsoft.Azure.Kinect.Sensor.1.4.1/*
+/[Pp]ackages/System.Buffers.4.4.0/*
+/[Pp]ackages/System.Memory.4.5.3/*
+/[Pp]ackages/System.Numerics.Vectors.4.5.0/*
+/[Pp]ackages/System.Reflection.Emit.Lightweight.4.6.0/*
+/[Pp]ackages/System.Runtime.CompilerServices.Unsafe.4.5.2/*
