@@ -1,5 +1,6 @@
 // Copyright (c) Chris Oje 2024
 using extOSC;
+using System.Text;
 using UnityEngine;
 
 namespace ImmersiveMusic
@@ -17,6 +18,10 @@ namespace ImmersiveMusic
         [SerializeField] private string _SampleIntAddress = "/sample/int/foo";
         [SerializeField] private string _TogglePlayAddress = "/toggle_play";
 
+//TODO: Some specific tests - need a better system for this
+        [SerializeField] private string _basslineVolumeAddress = "/bassline_volume";
+        [SerializeField] private string _toggleShifterTremeloAddress = "/toggle_shifter_tremelo";
+
         //[Header("OSC Messages")]
         //public Text TransmitterTextFloat;
         //public Text TransmitterTextInt;
@@ -26,6 +31,10 @@ namespace ImmersiveMusic
             Receiver.Bind(_SampleFloatAddress, ReceiveSampleFloat);
             Receiver.Bind(_SampleIntAddress, ReceiveSampleInt);
             Receiver.Bind(_TogglePlayAddress, ReceiveTogglePlay);
+
+//TODO:
+            Receiver.Bind(_basslineVolumeAddress, ReceiveOSCMessage);
+            Receiver.Bind(_toggleShifterTremeloAddress, ReceiveOSCMessage);
 
 //TODO: Not best place to do this, but a start
             SendSampleFloat(69f);
@@ -102,6 +111,27 @@ namespace ImmersiveMusic
 
                 Debug.Log($"ReceiveTogglePlay: has impulse");
             }
+        }
+
+
+        static bool _toggle = false;
+
+        public void ReceiveOSCMessage(OSCMessage message)
+        {
+            StringBuilder str = new StringBuilder();
+            str.AppendLine($"ReceiveOSCMessage: {message.Address} | {message.Ip} : {message.Port}");
+            foreach (var value in message.Values)
+            {
+                str.AppendLine($"{value.Type}: {value.Value}");
+            }
+            Debug.Log(str);
+
+//TODO: Hack
+            _toggle = !_toggle;
+            Send("/toggle_drum_electrifier", OSCValue.Impulse());
+            Send("/toggle_brain_dance", OSCValue.Bool(_toggle));
+            Send("/toggle_ambidel", OSCValue.Float(_toggle ? 1f : 0f));
+            Send("/breakbeats_volume", OSCValue.Float(-25f));
         }
 
         #endregion Reciever Methods
