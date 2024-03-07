@@ -65,3 +65,5 @@
 # ...except for LightingData.assets, since those are binary by design and git corrupts them as text
 LightingData.asset filter=lfs diff=lfs merge=lfs -text
 
+# Max patch files should not be in LFS
+*.[aA][mM][xX][dD] -filter -merge -diff text
