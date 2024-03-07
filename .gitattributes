@@ -62,3 +62,6 @@
 # Asset files should not be in LFS
 *.[aA][sS][sS][eE][tT] -filter -merge -diff text
 
+# ...except for LightingData.assets, since those are binary by design and git corrupts them as text
+LightingData.asset filter=lfs diff=lfs merge=lfs -text
+

@@ -22,6 +22,16 @@ namespace ImmersiveMusic
         [SerializeField] private string _basslineVolumeAddress = "/bassline_volume";
         [SerializeField] private string _toggleShifterTremeloAddress = "/toggle_shifter_tremelo";
 
+        // Track Controller supported OSC addresses
+        [SerializeField] private string trackname = "/trackname";
+        [SerializeField] private string tempo = "/tempo";
+        [SerializeField] private string volume = "/volume";
+        [SerializeField] private string reverb_decay = "/reverb_decay";
+
+        // Tracks we support
+        [SerializeField] private string bassline = "bassline";
+        [SerializeField] private string drums = "drums";
+
         //[Header("OSC Messages")]
         //public Text TransmitterTextFloat;
         //public Text TransmitterTextInt;
@@ -35,6 +45,17 @@ namespace ImmersiveMusic
 //TODO:
             Receiver.Bind(_basslineVolumeAddress, ReceiveOSCMessage);
             Receiver.Bind(_toggleShifterTremeloAddress, ReceiveOSCMessage);
+
+//TODO: Supported track controller OSC addresses
+//TODO: Need a better way to create and descontruct the addresses (get the track etc)
+            Receiver.Bind($"/{bassline}{trackname}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{tempo}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{volume}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{reverb_decay}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{trackname}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{tempo}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{volume}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{reverb_decay}", ReceiveOSCMessage);
 
 //TODO: Not best place to do this, but a start
             SendSampleFloat(69f);
