@@ -65,6 +65,12 @@ namespace ImmersiveMusic
 
         #region Transmitter Methods
 
+        public void SendReverbDecayFloat(string track, float value)
+        {
+            Debug.Log($"SendReverbDecayFloat: {value} | track: {track}");
+            Send($"/{track}{reverb_decay}", OSCValue.Float(value));
+        }
+
         public void SendSampleFloat(float value)
         {
             Debug.Log($"SendSampleFloat: {value}");
@@ -139,8 +145,24 @@ namespace ImmersiveMusic
 
         public void ReceiveOSCMessage(OSCMessage message)
         {
+            // Extract the track id from the address
+            string[] parts = message.Address.Split('/');
+            string track = parts.Length > 1 ? parts[1] : "-unknown-";
+            switch (track)
+            {
+                case "bassline":    //TODO: Don't hardcode
+                    Debug.Log("Bassline track");
+                    break;
+                case "drums":
+                    Debug.Log("Drums track");
+                    break;
+                default:
+                    Debug.Log("Unknown track");
+                    break;
+            }
+
             StringBuilder str = new StringBuilder();
-            str.AppendLine($"ReceiveOSCMessage: {message.Address} | {message.Ip} : {message.Port}");
+            str.AppendLine($"ReceiveOSCMessage: {message.Address} (track: {track}) | {message.Ip} : {message.Port}");
             foreach (var value in message.Values)
             {
                 str.AppendLine($"{value.Type}: {value.Value}");
@@ -148,11 +170,12 @@ namespace ImmersiveMusic
             Debug.Log(str);
 
 //TODO: Hack
-            _toggle = !_toggle;
+/*            _toggle = !_toggle;
             Send("/toggle_drum_electrifier", OSCValue.Impulse());
             Send("/toggle_brain_dance", OSCValue.Bool(_toggle));
             Send("/toggle_ambidel", OSCValue.Float(_toggle ? 1f : 0f));
-            Send("/breakbeats_volume", OSCValue.Float(-25f));
+            Send("/breakbeats_volume", OSCValue.Float(-25f));*/
+            Send($"/{track}{reverb_decay}", OSCValue.Float(0.5f));
         }
 
         #endregion Reciever Methods
