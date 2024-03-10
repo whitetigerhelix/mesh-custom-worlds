@@ -130,6 +130,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2222442465008570316, guid: b15caf3609bc31e4486847ccaf885745,
+        type: 3}
+      propertyPath: _address
+      value: /toggle_brain_dance
+      objectReference: {fileID: 0}
     - target: {fileID: 2266096309336270469, guid: b15caf3609bc31e4486847ccaf885745,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -298,7 +303,7 @@ PrefabInstance:
     - target: {fileID: 4379113459598651853, guid: b15caf3609bc31e4486847ccaf885745,
         type: 3}
       propertyPath: _address
-      value: /volume/1
+      value: /breakbeats_volume
       objectReference: {fileID: 0}
     - target: {fileID: 5303324350396446164, guid: b15caf3609bc31e4486847ccaf885745,
         type: 3}
@@ -314,6 +319,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _address
       value: /decay/1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5904274783182105222, guid: b15caf3609bc31e4486847ccaf885745,
+        type: 3}
+      propertyPath: _address
+      value: /toggle_drum_electrifier
       objectReference: {fileID: 0}
     - target: {fileID: 6018711111204384899, guid: b15caf3609bc31e4486847ccaf885745,
         type: 3}
@@ -349,6 +359,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6789808489806497758, guid: b15caf3609bc31e4486847ccaf885745,
+        type: 3}
+      propertyPath: _address
+      value: /toggle_ambidel
       objectReference: {fileID: 0}
     - target: {fileID: 7868244117902078963, guid: b15caf3609bc31e4486847ccaf885745,
         type: 3}

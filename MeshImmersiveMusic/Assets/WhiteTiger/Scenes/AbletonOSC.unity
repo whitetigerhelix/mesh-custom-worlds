@@ -1035,6 +1035,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2308189757723386563, guid: 876298184c0b2c8468411801b8ca2f32,
+        type: 3}
+      propertyPath: _transmitter
+      value: 
+      objectReference: {fileID: 117466123702227536}
     - target: {fileID: 2485605623116937414, guid: 876298184c0b2c8468411801b8ca2f32,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1070,6 +1075,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3441412159073456027, guid: 876298184c0b2c8468411801b8ca2f32,
+        type: 3}
+      propertyPath: _transmitter
+      value: 
+      objectReference: {fileID: 117466123702227536}
     - target: {fileID: 4062622479827254673, guid: 876298184c0b2c8468411801b8ca2f32,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1144,6 +1154,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5565842782558615944, guid: 876298184c0b2c8468411801b8ca2f32,
+        type: 3}
+      propertyPath: _address
+      value: /drums/reverb_decay
       objectReference: {fileID: 0}
     - target: {fileID: 5565842782558615944, guid: 876298184c0b2c8468411801b8ca2f32,
         type: 3}
@@ -1270,6 +1285,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8011859058560976777, guid: 876298184c0b2c8468411801b8ca2f32,
+        type: 3}
+      propertyPath: _transmitter
+      value: 
+      objectReference: {fileID: 117466123702227536}
     - target: {fileID: 8793144220652557965, guid: 876298184c0b2c8468411801b8ca2f32,
         type: 3}
       propertyPath: m_AnchorMax.y

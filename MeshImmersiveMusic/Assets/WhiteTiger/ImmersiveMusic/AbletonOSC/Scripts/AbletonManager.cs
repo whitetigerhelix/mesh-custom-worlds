@@ -1,5 +1,6 @@
 // Copyright (c) Chris Oje 2024
 using extOSC;
+using System.Text;
 using UnityEngine;
 
 namespace ImmersiveMusic
@@ -17,6 +18,20 @@ namespace ImmersiveMusic
         [SerializeField] private string _SampleIntAddress = "/sample/int/foo";
         [SerializeField] private string _TogglePlayAddress = "/toggle_play";
 
+//TODO: Some specific tests - need a better system for this
+        [SerializeField] private string _basslineVolumeAddress = "/bassline_volume";
+        [SerializeField] private string _toggleShifterTremeloAddress = "/toggle_shifter_tremelo";
+
+        // Track Controller supported OSC addresses
+        [SerializeField] private string trackname = "/trackname";
+        [SerializeField] private string tempo = "/tempo";
+        [SerializeField] private string volume = "/volume";
+        [SerializeField] private string reverb_decay = "/reverb_decay";
+
+        // Tracks we support
+        [SerializeField] private string bassline = "bassline";
+        [SerializeField] private string drums = "drums";
+
         //[Header("OSC Messages")]
         //public Text TransmitterTextFloat;
         //public Text TransmitterTextInt;
@@ -27,6 +42,21 @@ namespace ImmersiveMusic
             Receiver.Bind(_SampleIntAddress, ReceiveSampleInt);
             Receiver.Bind(_TogglePlayAddress, ReceiveTogglePlay);
 
+//TODO:
+            Receiver.Bind(_basslineVolumeAddress, ReceiveOSCMessage);
+            Receiver.Bind(_toggleShifterTremeloAddress, ReceiveOSCMessage);
+
+//TODO: Supported track controller OSC addresses
+//TODO: Need a better way to create and descontruct the addresses (get the track etc)
+            Receiver.Bind($"/{bassline}{trackname}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{tempo}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{volume}", ReceiveOSCMessage);
+            Receiver.Bind($"/{bassline}{reverb_decay}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{trackname}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{tempo}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{volume}", ReceiveOSCMessage);
+            Receiver.Bind($"/{drums}{reverb_decay}", ReceiveOSCMessage);
+
 //TODO: Not best place to do this, but a start
             SendSampleFloat(69f);
             SendSampleInt(77);
@@ -34,6 +64,12 @@ namespace ImmersiveMusic
         }
 
         #region Transmitter Methods
+
+        public void SendReverbDecayFloat(string track, float value)
+        {
+            Debug.Log($"SendReverbDecayFloat: {value} | track: {track}");
+            Send($"/{track}{reverb_decay}", OSCValue.Float(value));
+        }
 
         public void SendSampleFloat(float value)
         {
@@ -102,6 +138,44 @@ namespace ImmersiveMusic
 
                 Debug.Log($"ReceiveTogglePlay: has impulse");
             }
+        }
+
+
+        static bool _toggle = false;
+
+        public void ReceiveOSCMessage(OSCMessage message)
+        {
+            // Extract the track id from the address
+            string[] parts = message.Address.Split('/');
+            string track = parts.Length > 1 ? parts[1] : "-unknown-";
+            switch (track)
+            {
+                case "bassline":    //TODO: Don't hardcode
+                    //Debug.Log("Bassline track");
+                    break;
+                case "drums":
+                    //Debug.Log("Drums track");
+                    break;
+                default:
+                    //Debug.Log("Unknown track");
+                    break;
+            }
+
+            StringBuilder str = new StringBuilder();
+            str.AppendLine($"ReceiveOSCMessage: {message.Address} (track: {track}) | {message.Ip} : {message.Port}");
+            foreach (var value in message.Values)
+            {
+                str.AppendLine($"{value.Type}: {value.Value}");
+            }
+            Debug.Log(str);
+
+//TODO: Hack
+/*            _toggle = !_toggle;
+            Send("/toggle_drum_electrifier", OSCValue.Impulse());
+            Send("/toggle_brain_dance", OSCValue.Bool(_toggle));
+            Send("/toggle_ambidel", OSCValue.Float(_toggle ? 1f : 0f));
+            Send("/breakbeats_volume", OSCValue.Float(-25f));*/
+//            Send($"/{track}{reverb_decay}", OSCValue.Float(0.5f));
         }
 
         #endregion Reciever Methods
