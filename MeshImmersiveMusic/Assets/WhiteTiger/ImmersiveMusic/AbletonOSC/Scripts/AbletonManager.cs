@@ -151,13 +151,13 @@ namespace ImmersiveMusic
             switch (track)
             {
                 case "bassline":    //TODO: Don't hardcode
-                    Debug.Log("Bassline track");
+                    //Debug.Log("Bassline track");
                     break;
                 case "drums":
-                    Debug.Log("Drums track");
+                    //Debug.Log("Drums track");
                     break;
                 default:
-                    Debug.Log("Unknown track");
+                    //Debug.Log("Unknown track");
                     break;
             }
 
@@ -175,7 +175,7 @@ namespace ImmersiveMusic
             Send("/toggle_brain_dance", OSCValue.Bool(_toggle));
             Send("/toggle_ambidel", OSCValue.Float(_toggle ? 1f : 0f));
             Send("/breakbeats_volume", OSCValue.Float(-25f));*/
-            Send($"/{track}{reverb_decay}", OSCValue.Float(0.5f));
+//            Send($"/{track}{reverb_decay}", OSCValue.Float(0.5f));
         }
 
         #endregion Reciever Methods

@@ -1157,6 +1157,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5565842782558615944, guid: 876298184c0b2c8468411801b8ca2f32,
         type: 3}
+      propertyPath: _address
+      value: /drums/reverb_decay
+      objectReference: {fileID: 0}
+    - target: {fileID: 5565842782558615944, guid: 876298184c0b2c8468411801b8ca2f32,
+        type: 3}
       propertyPath: _transmitter
       value: 
       objectReference: {fileID: 117466123702227536}
