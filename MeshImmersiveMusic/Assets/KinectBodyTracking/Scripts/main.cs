@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if KINECT_BODYTRACKING
+
+using UnityEngine;
 
 public class main : MonoBehaviour
 {
@@ -36,3 +38,5 @@ public class main : MonoBehaviour
         }
     }
 }
+
+#endif //KINECT_BODYTRACKING

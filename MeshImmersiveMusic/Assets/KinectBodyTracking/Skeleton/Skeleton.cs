@@ -1,10 +1,12 @@
-﻿using Microsoft.Azure.Kinect.BodyTracking;
+﻿#if KINECT_BODYTRACKING
+
+using Microsoft.Azure.Kinect.BodyTracking;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Skeleton : MonoBehaviour
 {
-    #region Enumerations
+	#region Enumerations
 
     public enum Visibility
     {
@@ -36,7 +38,7 @@ public class Skeleton : MonoBehaviour
     // On single body part can be applied chain of transformations.
     private class BoneTransformation
     {
-        #region Body transformations
+		#region Body transformations
         public enum Transformations
         {
             // In case body part is attached to joint and move together with joint (head on neck).
@@ -60,7 +62,7 @@ public class Skeleton : MonoBehaviour
             //Align with direction between middle to joints with between two joints.
             AlignMiddleJointsToMiddleJoints
         }
-        #endregion
+		#endregion
 
         // Reference to game object which is going to be deformed.
         public Transform bodyPart;
@@ -108,13 +110,13 @@ public class Skeleton : MonoBehaviour
         public Transform transformation;
         public Vector3 originalLocalScale;
     }
-    #endregion
+	#endregion
 
-    #region skin materials
+	#region skin materials
     public Material inFocusMaterial;
     public Material outOfFocusMaterial;
     public List<Renderer> skin = new List<Renderer>();
-    #endregion
+	#endregion
 
     [Tooltip("True in case you want to hide bones on scene")]
     public bool hideBones;
@@ -164,7 +166,7 @@ public class Skeleton : MonoBehaviour
     // Holds value of initial position.
     private Dictionary<BodyParts, Vector3> initialBodyPartPositions = new Dictionary<BodyParts, Vector3>();
 
-    #region Unity callbacks
+	#region Unity callbacks
     // Start is called before the first frame update
     void Awake()
     {
@@ -176,7 +178,7 @@ public class Skeleton : MonoBehaviour
 
         ChangeMaterial(outOfFocusMaterial);
     }
-    #endregion
+	#endregion
 
     // Cache all parts of body which are renderer.
     private void InitializeSkinParts()
@@ -219,7 +221,7 @@ public class Skeleton : MonoBehaviour
         }
     }
 
-    #region Skeletal functions
+	#region Skeletal functions
     private void InitializeBodyParts()
     {
         bodyPartCache[BodyParts.RightHand] = new List<BoneTransformation>(){
@@ -647,7 +649,7 @@ public class Skeleton : MonoBehaviour
         }
     }
 
-    #region Transformation functions
+	#region Transformation functions
 
     // Move object relativelly to attached.
     private void AttachToJointTransformation(
@@ -751,7 +753,7 @@ public class Skeleton : MonoBehaviour
         AlignWithAxis(bodyPart, start, end, axis);
     }
 
-    #endregion
+	#endregion
 
     // Finds scale factor for given bone/part of body.
     private float FindBoneScaleFactor(BodyParts b)
@@ -804,5 +806,7 @@ public class Skeleton : MonoBehaviour
     {
         currentJointPositions = newData.currentJointPositions;
     }
-    #endregion
+	#endregion
 }
+
+#endif //KINECT_BODYTRACKING

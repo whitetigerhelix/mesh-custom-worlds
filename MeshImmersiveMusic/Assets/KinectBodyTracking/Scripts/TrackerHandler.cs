@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if KINECT_BODYTRACKING
+
+using System.Collections.Generic;
 using UnityEngine;
 using Microsoft.Azure.Kinect.BodyTracking;
 
@@ -206,3 +208,5 @@ public class TrackerHandler : MonoBehaviour
     }
 
 }
+
+#endif //KINECT_BODYTRACKING

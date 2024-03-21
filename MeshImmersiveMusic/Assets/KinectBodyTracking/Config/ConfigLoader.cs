@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if KINECT_BODYTRACKING
+
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -42,3 +44,5 @@ public class ConfigLoader : MonoBehaviour
         }
     }
 }
+
+#endif //KINECT_BODYTRACKING

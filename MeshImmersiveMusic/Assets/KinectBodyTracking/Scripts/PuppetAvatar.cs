@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if KINECT_BODYTRACKING
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Microsoft.Azure.Kinect.BodyTracking;
@@ -103,3 +105,5 @@ public class PuppetAvatar : MonoBehaviour
     }
 
 }
+
+#endif //KINECT_BODYTRACKING

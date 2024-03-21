@@ -1,4 +1,6 @@
-﻿class Constants
+﻿#if KINECT_BODYTRACKING
+
+class Constants
 {
     public const float Invalid2DCoordinate = -1;
 
@@ -33,4 +35,4 @@
     }
 }
 
-
+#endif //KINECT_BODYTRACKING

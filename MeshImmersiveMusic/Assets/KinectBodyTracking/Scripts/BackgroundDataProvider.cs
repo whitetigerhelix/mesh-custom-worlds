@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if KINECT_BODYTRACKING
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -62,3 +64,5 @@ public abstract class BackgroundDataProvider:IDisposable
         _cancellationTokenSource = null;
     }
 }
+
+#endif //KINECT_BODYTRACKING
