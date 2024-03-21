@@ -1,7 +1,9 @@
 {
-    "name": "KinectBodyTracking",
+    "name": "WhiteTiger.ImmersiveMusic",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:7b4b8ddafd710964f8c6a9a1cb414feb"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
