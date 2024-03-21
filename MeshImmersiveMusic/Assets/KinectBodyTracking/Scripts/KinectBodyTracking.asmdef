@@ -1,0 +1,16 @@
+{
+    "name": "KinectBodyTracking",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "KINECT_BODYTRACKING"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
