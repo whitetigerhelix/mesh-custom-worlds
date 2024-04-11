@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.Kinect.BodyTracking;
+﻿#if KINECT_BODYTRACKING
+
+using Microsoft.Azure.Kinect.BodyTracking;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +29,7 @@ public class SkeletonPosition
 
     public Dictionary<JointId, Vector3> currentJointPositions { get; set; } = new Dictionary<JointId, Vector3>();
 
-    #region overriden operators
+	#region overriden operators
 
     // Add two skeleton positions to create new.
     public static SkeletonPosition operator +(SkeletonPosition b, SkeletonPosition c)
@@ -62,5 +64,7 @@ public class SkeletonPosition
         return a;
     }
 
-    #endregion
+	#endregion
 }
+
+#endif //KINECT_BODYTRACKING

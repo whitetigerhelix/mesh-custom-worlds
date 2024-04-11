@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.Kinect.BodyTracking;
+﻿#if KINECT_BODYTRACKING
+
+using Microsoft.Azure.Kinect.BodyTracking;
 using Microsoft.Azure.Kinect.Sensor;
 using System;
 using System.IO;
@@ -128,3 +130,5 @@ public class SkeletalTrackingProvider : BackgroundDataProvider
         }
     }
 }
+
+#endif //KINECT_BODYTRACKING

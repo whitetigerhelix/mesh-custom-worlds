@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if KINECT_BODYTRACKING
+
+using System.Collections.Generic;
 
 public class Smoother
 {
@@ -76,3 +78,5 @@ public class Smoother
         }
     }
 }
+
+#endif //KINECT_BODYTRACKING

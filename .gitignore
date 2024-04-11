@@ -70,3 +70,15 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Immersive Music files (Kinect Body Tracking dependencies)
+/MeshImmersiveMusic/Assets/Plugins/KinectBodyTracking/
+/MeshImmersiveMusic/Assets/Plugins/KinectBodyTracking.meta
+/MeshImmersiveMusic/KinectBodyTrackingPackages/
+/MeshImmersiveMusic/directml.dll
+/MeshImmersiveMusic/dnn_model_2_0_op11.onnx
+/MeshImmersiveMusic/onnxruntime.dll
+/MeshImmersiveMusic/onnxruntime_providers_cuda.dll
+/MeshImmersiveMusic/onnxruntime_providers_shared.dll
+/MeshImmersiveMusic/onnxruntime_providers_tensorrt.dll
+

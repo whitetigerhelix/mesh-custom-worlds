@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.Kinect.BodyTracking;
+﻿#if KINECT_BODYTRACKING
+
+using Microsoft.Azure.Kinect.BodyTracking;
 
 [System.Serializable]
 public class InitialAndEndStability
@@ -131,3 +133,5 @@ public class Configs
     public bool DrawOnlyMainSkeleton = true;
     public bool IsFpsDisplayActive = false;
 }
+
+#endif //KINECT_BODYTRACKING

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if KINECT_BODYTRACKING
+
+using System;
 using System.Runtime.Serialization;
 
 // Class which contains all data sent from background thread to main thread.
@@ -67,3 +69,4 @@ public class BackgroundData : ISerializable
     }
 }
 
+#endif //KINECT_BODYTRACKING

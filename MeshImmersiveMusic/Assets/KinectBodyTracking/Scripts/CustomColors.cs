@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if KINECT_BODYTRACKING
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,3 +20,4 @@ struct CustomColors
     public float Blue { get; set; }
 }
 
+#endif //KINECT_BODYTRACKING

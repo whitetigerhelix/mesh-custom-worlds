@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if KINECT_BODYTRACKING
+
+using UnityEngine;
 
 public class CameraFlipper : MonoBehaviour
 {
@@ -40,3 +42,5 @@ public class CameraFlipper : MonoBehaviour
         }
     }
 }
+
+#endif //KINECT_BODYTRACKING

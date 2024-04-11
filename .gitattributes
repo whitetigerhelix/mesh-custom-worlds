@@ -58,6 +58,7 @@
 *.[nN][uU][pP][kK][gG] filter=lfs diff=lfs merge=lfs -text
 *.[pP]7[sS] filter=lfs diff=lfs merge=lfs -text
 *.[mM][kK][vV] filter=lfs diff=lfs merge=lfs -text
+*.hiplc -filter -merge -diff text
 
 # Asset files should not be in LFS
 *.[aA][sS][sS][eE][tT] -filter -merge -diff text
