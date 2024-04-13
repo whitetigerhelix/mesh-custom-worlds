@@ -1,0 +1,5 @@
+-unsafe
+-warnaserror+
+-warnaserror+:CS0414
+-warnaserror+:CS0162
+-nullable:annotations
