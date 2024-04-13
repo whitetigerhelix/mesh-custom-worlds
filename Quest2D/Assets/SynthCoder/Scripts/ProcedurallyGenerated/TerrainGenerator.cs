@@ -45,9 +45,9 @@ namespace SynthCoder
         public Color color2 = new Color(0.04f, 0f, 1f, 1f);
         public Color color3 = new Color(1f, 0.37f, 0f, 1f);
 
-        public string terrainTextureSavePath = "Assets/SynthCoder/Resources/ProceduralTextures/TerrainTexture.asset";
-        public string gradientTextureSavePath = "Assets/SynthCoder/Resources/ProceduralTextures/GradientTexture.asset";
-        public string noiseTextureSavePath = "Assets/SynthCoder/Resources/ProceduralTextures/NoiseTexture.asset";
+        public string terrainTextureSavePath = "Assets/SynthCoder/Materials/ProceduralTextures/TerrainTexture.asset";
+        public string gradientTextureSavePath = "Assets/SynthCoder/Materials/ProceduralTextures/GradientTexture.asset";
+        public string noiseTextureSavePath = "Assets/SynthCoder/Materials/ProceduralTextures/NoiseTexture.asset";
 
         protected Mesh terrainMesh;
         protected MeshRenderer terrainRenderer;
