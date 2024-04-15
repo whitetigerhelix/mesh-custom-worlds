@@ -133,6 +133,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2400336305312589265, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
         type: 3}
+      propertyPath: terrainDepth
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400336305312589265, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
+        type: 3}
+      propertyPath: terrainWidth
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400336305312589265, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
+        type: 3}
       propertyPath: noiseTextureSavePath
       value: Assets/SynthCoder/Materials/ProceduralTextures/NoiseTexture.asset
       objectReference: {fileID: 0}
@@ -159,7 +169,7 @@ PrefabInstance:
     - target: {fileID: 9161252195246602810, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -50
+      value: -128
       objectReference: {fileID: 0}
     - target: {fileID: 9161252195246602810, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
         type: 3}
@@ -169,7 +179,7 @@ PrefabInstance:
     - target: {fileID: 9161252195246602810, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -50
+      value: -128
       objectReference: {fileID: 0}
     - target: {fileID: 9161252195246602810, guid: ca7d77ac4a3735d4e9a8a085a1002a95,
         type: 3}
