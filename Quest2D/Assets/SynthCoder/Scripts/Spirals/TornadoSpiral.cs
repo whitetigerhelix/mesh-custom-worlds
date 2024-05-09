@@ -11,7 +11,9 @@ namespace SynthCoder
     {
         [SerializeField] private int numSpheres = 50;
 		public int NumSpheres { get => numSpheres; set => numSpheres = value; }
-        [SerializeField] private float radius = 1.0f;
+		[SerializeField] private float sphereRadius = 0.2f;
+		public float SphereRadius { get => sphereRadius; set => sphereRadius = value; }
+		[SerializeField] private float radius = 1.0f;
 		public float Radius { get => radius; set => radius = value; }
 		[SerializeField] private float height = 2.0f;
 		public float Height { get => height; set => height = value; }
@@ -40,8 +42,9 @@ namespace SynthCoder
 					Instantiate(spherePrefab) :
 					GameObject.CreatePrimitive(PrimitiveType.Sphere);
 				sphere.transform.parent = transform;
-                sphere.transform.localScale = Vector3.one * 0.2f;
-                sphere.GetComponent<Renderer>().material.color = Color.Lerp(colorA, colorB, (float)i / NumSpheres);
+                sphere.transform.localScale = Vector3.one * SphereRadius;
+				//sphere.GetComponent<Renderer>().material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+				sphere.GetComponent<Renderer>().material.color = Color.Lerp(colorA, colorB, (float)i / NumSpheres);
                 sphere.GetComponent<SphereCollider>().enabled = false;
                 spheres[i] = sphere;
             }

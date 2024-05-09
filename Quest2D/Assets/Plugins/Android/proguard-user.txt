@@ -1,0 +1,4 @@
+# Prevent obfuscation of Unity classes
+-keep class com.unity3d.** { *; }
+
+-keep class com.microsoft.mesh.msalquest2d.** { *; }

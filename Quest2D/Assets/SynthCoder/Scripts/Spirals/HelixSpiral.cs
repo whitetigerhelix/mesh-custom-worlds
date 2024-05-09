@@ -138,7 +138,8 @@ namespace SynthCoder
                     sphere.transform.localPosition = pos;
                     sphere.transform.localScale = Vector3.one * sphereRadius;
                     sphere.GetComponent<SphereCollider>().enabled = false;
-                    spheres[helixIndex].Add(sphere);
+					//sphere.GetComponent<Renderer>().material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+					spheres[helixIndex].Add(sphere);
 
                     totalHeight = Mathf.Max(totalHeight, pos.y);
                 }
