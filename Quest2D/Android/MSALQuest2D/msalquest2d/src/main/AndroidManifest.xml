@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- Required permissions for the library -->
+	<uses-permission android:name="android.permission.INTERNET" />
+
+	<application>
+
+		<!-- Define your library's activities here -->
+		<activity android:name="com.microsoft.mesh.msalquest2d.AuthenticationActivity"
+			android:exported="true">
+			<!-- Intent filters, if any, for the activity -->
+			<intent-filter>
+				<!-- If your activity is started via a specific action, define it here -->
+				<action android:name="com.microsoft.mesh.msalquest2d.AUTHENTICATION" />
+				<action android:name="android.intent.action.VIEW" />
+
+				<!-- If the activity serves as a main entry point, include this. Usually, this is not the case for library modules. -->
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<!-- Any other components (services, receivers, etc.) your library requires -->
+
+		<!-- MSAL Configuration -->
+		<activity android:name="com.microsoft.identity.client.BrowserTabActivity"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="msalb1993b63-3d10-4ad9-abcf-edd05e6a7dda" android:host="auth" />
+			</intent-filter>
+		</activity>
+
+	</application>
+</manifest>

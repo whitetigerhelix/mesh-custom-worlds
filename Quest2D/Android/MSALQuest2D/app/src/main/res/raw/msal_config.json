@@ -1,0 +1,12 @@
+{
+  "client_id" : "b1993b63-3d10-4ad9-abcf-edd05e6a7dda",
+  "authorization_user_agent" : "DEFAULT",
+  "redirect_uri" : "msalb1993b63-3d10-4ad9-abcf-edd05e6a7dda://auth",
+  "authorities" : [
+    {
+      "type": "AAD",
+      "authority_url": "https://login.microsoftonline.com/common"
+    }
+  ],
+  "account_mode" : "SINGLE"
+}
