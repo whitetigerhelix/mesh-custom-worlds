@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [mood, setMood] = useState('');
+  const [playlist, setPlaylist] = useState([]);
+  const [moodBoard, setMoodBoard] = useState('');
+
+  const handleMoodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setMood(event.target.value);
+  };
+
+  const generateMoodBoard = async () => {
+    // Placeholder for API call to generate playlist and mood board
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ mood }),
+    });
+    const data = await response.json();
+    setPlaylist(data.playlist);
+    setMoodBoard(data.moodBoard);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <h1>Music Mood Board</h1>
+      <div className="mood-selection">
+        <label htmlFor="mood">Choose a mood:</label>
+        <select id="mood" value={mood} onChange={handleMoodChange}>
+          <option value="">Select a mood</option>
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="energetic">Energetic</option>
+          <option value="calm">Calm</option>
+        </select>
+        <button onClick={generateMoodBoard}>Generate</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="playlist">
+        <h2>Playlist</h2>
+        <ul>
+          {playlist.map((song, index) => (
+            <li key={index}>{song}</li>
+          ))}
+        </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <div className="mood-board">
+        <h2>Mood Board</h2>
+        {moodBoard && <img src={moodBoard} alt="Mood Board" />}
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
