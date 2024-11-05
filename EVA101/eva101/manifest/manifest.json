@@ -2,19 +2,19 @@
   "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
   "manifestVersion": "1.17",
   "version": "1.0.0",
-  "id": "dc7a65e3-f50d-43d4-8a2e-031670b6f731",
+  "id": "4ab30e28-8e9d-4d45-ad7c-c105c3fb5c17",
   "developer": {
-    "name": "Eva101",
+    "name": "Eva101-CHROJE",
     "websiteUrl": "https://microsoft.com",
     "privacyUrl": "https://microsoft.com/privacy",
     "termsOfUseUrl": "https://microsoft.com/terms"
   },
   "name": {
-    "short": "Eva101",
-    "full": "Eva101 Microsoft Teams App"
+    "short": "Eva101-CHROJE",
+    "full": "Eva101 Microsoft Teams App - The CHROJE Slice"
   },
   "description": {
-    "short": "A brief description of the app.",
+    "short": "Eva101 workshop - the CHROJE slice",
     "full": "A more detailed description of the app's purpose and features."
   },
   "icons": {
@@ -24,16 +24,16 @@
   "accentColor": "#FFFFFF",
   "staticTabs": [
     {
-      "entityId": "LocalHost EVA 101",
-      "name": "LocalHost EVA 101",
+      "entityId": "LocalHost EVA 101 - CHROJE",
+      "name": "LocalHost EVA 101 - CHROJE",
       "contentUrl": "https://localhost",
       "websiteUrl": "https://localhost",
       "scopes": ["personal"]
     }
   ],
   "webApplicationInfo": {
-    "id": "3016d0ce-47cc-4005-b11d-5fcabb1b643d",
-    "resource": "api://localhost/3016d0ce-47cc-4005-b11d-5fcabb1b643d"
+    "id": "c4e2ccfa-73fd-4e34-a187-697ecf76cf5e",
+    "resource": "api://localhost/c4e2ccfa-73fd-4e34-a187-697ecf76cf5e"
   },
   "bots": [],
   "composeExtensions": [],
