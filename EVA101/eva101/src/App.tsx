@@ -12,67 +12,75 @@ const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const inspectorRef = useRef<boolean>(false);
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
-
-    // Create the Babylon engine and scene
-    const engine = new Engine(canvasRef.current, true);
+  const setupScene = (canvas: HTMLCanvasElement) => {
+    const engine = new Engine(canvas, true);
     const scene = new Scene(engine);
 
     // Create a basic camera
     const camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
-    camera.setTarget(Vector3.Zero()); // Point the camera at the origin
-    camera.attachControl(canvasRef.current, true); // Attach the camera to the canvas
+    camera.setTarget(Vector3.Zero());
+    camera.attachControl(canvas, true);
 
     // Create a basic light
     const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
-    light.intensity = 0.7; // Set the light intensity
+    light.intensity = 0.7;
 
     // Create a basic sphere
     const sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
-    sphere.position.y = 1; // Move the sphere upward 1 unit
+    sphere.position.y = 1;
 
-    // To provide a sense of scale and grounding, add a plane below the sphere
+    // Add a plane below the sphere
     const ground = MeshBuilder.CreateGround(
       "ground1",
       { width: 6, height: 6 },
       scene
     );
 
-    // Function to toggle the Babylon Inspector
-    const toggleInspector = () => {
-      if (inspectorRef.current) {
-        Inspector.Hide();
-      } else {
-        Inspector.Show(scene, {
-          embedMode: true,
-          overlay: true,
-        });
-      }
-      inspectorRef.current = !inspectorRef.current;
-    };
+    return { engine, scene };
+  };
 
-    // Event listener for toggling the inspector with Ctrl+D
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "d") {
-        event.preventDefault();
-        toggleInspector();
-      }
-    };
+  const renderScene = (scene: Scene) => {
+    scene.render();
 
-    window.addEventListener("keydown", handleKeyDown);
+    //TODO: Add custom rendering code here
+  };
 
-    // Resize the canvas when the window is resized
+  const toggleInspector = (scene: Scene) => {
+    if (inspectorRef.current) {
+      Inspector.Hide();
+    } else {
+      Inspector.Show(scene, {
+        embedMode: true,
+        overlay: true,
+      });
+    }
+    inspectorRef.current = !inspectorRef.current;
+  };
+
+  const handleKeyDown = (event: KeyboardEvent, scene: Scene) => {
+    if (event.ctrlKey && event.key === "d") {
+      event.preventDefault();
+      toggleInspector(scene);
+    }
+  };
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const { engine, scene } = setupScene(canvasRef.current);
+
+    const onKeyDown = (event: KeyboardEvent) => handleKeyDown(event, scene);
+    window.addEventListener("keydown", onKeyDown);
+
     window.addEventListener("resize", () => engine.resize());
 
-    // Render loop
     engine.runRenderLoop(() => {
-      scene.render();
+      renderScene(scene);
     });
 
     return () => {
       engine.dispose();
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
 
