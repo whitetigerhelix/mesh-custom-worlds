@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.17",
+  "version": "1.0.0",
+  "id": "dc7a65e3-f50d-43d4-8a2e-031670b6f731",
+  "developer": {
+    "name": "Eva101",
+    "websiteUrl": "https://microsoft.com",
+    "privacyUrl": "https://microsoft.com/privacy",
+    "termsOfUseUrl": "https://microsoft.com/terms"
+  },
+  "name": {
+    "short": "Eva101",
+    "full": "Eva101 Microsoft Teams App"
+  },
+  "description": {
+    "short": "A brief description of the app.",
+    "full": "A more detailed description of the app's purpose and features."
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#FFFFFF",
+  "staticTabs": [
+    {
+      "entityId": "LocalHost EVA 101",
+      "name": "LocalHost EVA 101",
+      "contentUrl": "https://localhost",
+      "websiteUrl": "https://localhost",
+      "scopes": ["personal"]
+    }
+  ],
+  "webApplicationInfo": {
+    "id": "3016d0ce-47cc-4005-b11d-5fcabb1b643d",
+    "resource": "api://localhost/3016d0ce-47cc-4005-b11d-5fcabb1b643d"
+  },
+  "bots": [],
+  "composeExtensions": [],
+  "permissions": ["identity", "messageTeamMembers"],
+
+  "validDomains": ["localhost"]
+}
