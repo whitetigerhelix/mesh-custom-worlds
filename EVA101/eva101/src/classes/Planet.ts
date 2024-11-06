@@ -9,8 +9,11 @@ import {
 
 export class Planet {
   public mesh: any;
+  private atmosphereMesh: any;
 
   ROTATION_SPEED = 0.01;
+  PLANET_DIAMETER = 2;
+  PLANET_ATMOSPHERE_DIAMETER = 2.15;
 
   constructor(
     scene: Scene,
@@ -32,11 +35,34 @@ export class Planet {
     sphereMaterial.reflectionTexture = skyboxMaterial.reflectionTexture;
 
     // Create a planetary sphere
-    this.mesh = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
+    this.mesh = MeshBuilder.CreateSphere(
+      "sphere",
+      { diameter: this.PLANET_DIAMETER },
+      scene
+    );
     this.mesh.position.y = 1;
     this.mesh.material = sphereMaterial;
 
     glowLayer.addIncludedOnlyMesh(this.mesh);
+
+    // Create the atmosphere
+    const atmosphereMaterial = new StandardMaterial(
+      "atmosphereMaterial",
+      scene
+    );
+    atmosphereMaterial.emissiveColor = new Color3(0.5, 0.5, 1);
+    atmosphereMaterial.alpha = 0.15;
+    atmosphereMaterial.diffuseTexture = new Texture(
+      "/textures/space_sky_nz.jpg",
+      scene
+    );
+    this.atmosphereMesh = MeshBuilder.CreateSphere(
+      "atmosphere",
+      { diameter: this.PLANET_ATMOSPHERE_DIAMETER },
+      scene
+    );
+    this.atmosphereMesh.material = atmosphereMaterial;
+    this.atmosphereMesh.position = this.mesh.position;
 
     // Setup render tick
     /*scene.onBeforeRenderObservable.add(() => {
@@ -47,5 +73,8 @@ export class Planet {
   public update() {
     // Rotate planet
     this.mesh.rotation.y += this.ROTATION_SPEED;
+
+    // Rotate the atmosphere slightly to give a dynamic effect
+    this.atmosphereMesh.rotation.y += -this.ROTATION_SPEED * 0.5;
   }
 }
