@@ -31,6 +31,10 @@ const LIGHT_INTENSITY = 1.0;
 const ORBIT_DISTANCE = 3;
 const ORBIT_SPEED = 0.001;
 const COLOR_TIME = 0.0025;
+const ROTATION_SPEED = 0.01;
+const BASE_TONE_FREQUENCY = 110; //440;
+
+const useExtraObjects = false; // Set to true to use extra objects, set to false to have the clean planet scene
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -69,7 +73,7 @@ const App: React.FC = () => {
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.disableLighting = true;
     skyboxMaterial.reflectionTexture = new CubeTexture(
-      "/textures/default_sky",
+      "/textures/space_sky",
       scene
     );
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
@@ -81,6 +85,8 @@ const App: React.FC = () => {
     const redMaterial = new StandardMaterial("redMaterial", scene);
     redMaterial.diffuseColor = new Color3(1, 0, 0); // Red
     redMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
+    redMaterial.emissiveColor = new Color3(0.5, 0, 0);
+    redMaterial.alpha = 0.1;
 
     // "Planet" material
     const sphereMaterial = new StandardMaterial("sphereMaterial", scene);
@@ -118,15 +124,6 @@ const App: React.FC = () => {
     sphere.position.y = 1;
     sphere.material = sphereMaterial;
 
-    // Add a plane below the sphere
-    /*    const ground = MeshBuilder.CreateGround(
-      "ground1",
-      { width: 6, height: 6 },
-      scene
-    );
-    ground.position.set(0, 0, 0);
-    ground.receiveShadows = true;
-*/
     const terrain = MeshBuilder.CreateGround(
       "terrain",
       {
@@ -139,40 +136,73 @@ const App: React.FC = () => {
     terrain.material = terrainMaterial;
     terrain.receiveShadows = true;
 
-    /*
-    const goldberg = MeshBuilder.CreateGoldberg("goldberg", { size: 1 }, scene);
-    goldberg.position.set(0, 3, 0);
-    goldberg.material = redMaterial;
-    
-    const box = MeshBuilder.CreateBox("box", { size: 1 }, scene);
-    box.position.set(3, 1, 0);
-    box.material = redMaterial;
+    if (useExtraObjects) {
+      // Add a groundplane below the sphere
+      const ground = MeshBuilder.CreateGround(
+        "ground1",
+        { width: 6, height: 6 },
+        scene
+      );
+      ground.position.set(0, 0, 0);
+      ground.receiveShadows = true;
+      ground.setEnabled(terrain == null); // Hide the ground plane, use terrain instead
 
-    const cylinder = MeshBuilder.CreateCylinder(
-      "cylinder",
-      { diameter: 1, height: 2 },
-      scene
-    );
-    cylinder.position.set(-3, 1, 0);
-    cylinder.material = redMaterial;
-*/
+      const goldberg = MeshBuilder.CreateGoldberg(
+        "goldberg",
+        { size: 1 },
+        scene
+      );
+      goldberg.position.set(0, 3, 0);
+      goldberg.material = redMaterial;
 
-    // Dynamic lights and shadow
+      const box = MeshBuilder.CreateBox("box", { size: 1 }, scene);
+      box.position.set(3, 1, 0);
+      box.material = redMaterial;
+
+      const cylinder = MeshBuilder.CreateCylinder(
+        "cylinder",
+        { diameter: 1, height: 2 },
+        scene
+      );
+      cylinder.position.set(-3, 1, 0);
+      cylinder.material = redMaterial;
+    }
+
+    //
+    // Orbiting star effect
+
+    // Dynamic lights for the star effect
     const pointLight = new PointLight(
       "pointLight",
       new Vector3(0, 1, 0),
       scene
     );
 
+    // Orbiting sphere to go with the star effect
+    const starSphere = MeshBuilder.CreateSphere(
+      "starSphere",
+      { diameter: 0.2 },
+      scene
+    );
+    starSphere.position.set(
+      pointLight.position.x,
+      pointLight.position.y,
+      pointLight.position.z
+    );
+    starSphere.material = redMaterial;
+
+    // Shadow from the star effect's light
     const shadowGenerator = new ShadowGenerator(1024, pointLight);
     shadowGenerator.usePoissonSampling = true;
     shadowGenerator.darkness = 0.05;
     shadowGenerator.addShadowCaster(sphere);
+    shadowGenerator.addShadowCaster(terrain);
+    shadowGenerator.addShadowCaster(starSphere);
 
     // Add glow layer for star effect
     const glowLayer = new GlowLayer("glow", scene);
     glowLayer.intensity = 0.5;
-    glowLayer.addIncludedOnlyMesh(sphere);
+    glowLayer.addIncludedOnlyMesh(starSphere);
 
     // Add particle system for star effect
     const particleSystem = new ParticleSystem("particles", 1000, scene);
@@ -202,30 +232,48 @@ const App: React.FC = () => {
     // Add sound
     const audioContext = new (window.AudioContext || window.AudioContext)();
     const oscillator = audioContext.createOscillator();
-    oscillator.type = "sine"; // You can change this to 'square', 'sawtooth', 'triangle'
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Set initial frequency in Hz
-    //oscillator.start();
+    oscillator.type = "triangle"; // You can change this to 'square', 'sawtooth', 'triangle', 'sine'
+    oscillator.frequency.setValueAtTime(
+      BASE_TONE_FREQUENCY,
+      audioContext.currentTime
+    ); // Set initial frequency in Hz
 
-    //TODO: Need to stop all audio when scene is disposed
-    const sound = new Sound("tone", null, scene, null, {
-      autoplay: false, //true,
-      loop: true,
-      spatialSound: true,
-    });
-    const audioBuffer = audioContext.createBuffer(
-      1,
-      audioContext.sampleRate * 2,
-      audioContext.sampleRate
+    // Create a GainNode for volume control
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(1, audioContext.currentTime); // Set initial volume
+
+    // Create a MediaStreamAudioDestinationNode
+    const mediaStreamDestination = audioContext.createMediaStreamDestination();
+
+    // Connect the oscillator to the GainNode, then to the MediaStreamAudioDestinationNode
+    oscillator.connect(gainNode);
+    gainNode.connect(mediaStreamDestination);
+
+    // Create the Sound instance using the media stream
+    const sound = new Sound(
+      "tone",
+      mediaStreamDestination.stream,
+      scene,
+      null,
+      {
+        autoplay: false,
+        loop: true,
+        spatialSound: true,
+        volume: 0.5, // Set lower volume for a more subtle effect
+        distanceModel: "exponential",
+        rolloffFactor: 1.5,
+      }
     );
-    const channelData = audioBuffer.getChannelData(0);
-    for (let i = 0; i < channelData.length; i++) {
-      channelData[i] = Math.sin(
-        (2 * Math.PI * 440 * i) / audioContext.sampleRate
-      );
-    }
-    sound.setAudioBuffer(audioBuffer);
-    //    sound.attachToMesh(pointLight);
-    oscillator.connect(audioContext.destination);
+
+    // Attach the sound to the starSphere for spatial sound
+    sound.attachToMesh(starSphere);
+
+    // Handle oscillator start/stop based on sound state
+    sound.play();
+    oscillator.start();
+    sound.onended = () => {
+      oscillator.stop();
+    };
 
     //
     // Physics
@@ -233,6 +281,7 @@ const App: React.FC = () => {
 
     scene.enablePhysics();
 
+    //TODO: add a new sphere for this instead, and make it a physics object and when you press a button (maybe f) it will launch the sphere into the air (with a simple particle effect and sound)
     /*sphere.physicsImpostor = new PhysicsImpostor(
       sphere,
       PhysicsImpostor.SphereImpostor,
@@ -251,7 +300,7 @@ const App: React.FC = () => {
 
     scene.onBeforeRenderObservable.add(() => {
       // Rotate planet
-      sphere.rotation.y += 0.01;
+      sphere.rotation.y += ROTATION_SPEED;
 
       // Orbit the light around the planet
       const time = Date.now() * ORBIT_SPEED;
@@ -275,13 +324,19 @@ const App: React.FC = () => {
       particleSystem.color1 = newColor;
       particleSystem.color2 = newColor2;
       particleSystem.emitter = pointLight.position; // Update emitter position
+      starSphere.position.set(
+        pointLight.position.x,
+        pointLight.position.y,
+        pointLight.position.z
+      );
 
       // Modulate the tone frequency based on the color
-      const frequency = 220 + 220 * newColor.r; // Example: base frequency 220Hz, modulated by red component
+      const baseFrequency = BASE_TONE_FREQUENCY / 2;
+      const frequency = baseFrequency + baseFrequency * newColor.r; // Example: base frequency 220Hz, modulated by red component
       oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
     });
 
-    return { engine, scene, camera };
+    return { engine, scene, camera, sound };
   };
 
   const renderScene = (scene: Scene, camera: FreeCamera) => {
@@ -324,9 +379,9 @@ const App: React.FC = () => {
 
     // Move camera up and down with Q and E
     if (event.key === "q") {
-      moveUpRef.current = true;
-    } else if (event.key === "e") {
       moveDownRef.current = true;
+    } else if (event.key === "e") {
+      moveUpRef.current = true;
     }
   };
 
@@ -335,9 +390,9 @@ const App: React.FC = () => {
 
     // Stop moving camera up and down with Q and E
     if (event.key === "q") {
-      moveUpRef.current = false;
-    } else if (event.key === "e") {
       moveDownRef.current = false;
+    } else if (event.key === "e") {
+      moveUpRef.current = false;
     }
   };
 
@@ -345,7 +400,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const { engine, scene, camera } = setupScene(canvasRef.current);
+    const { engine, scene, camera, sound } = setupScene(canvasRef.current);
 
     const onKeyDown = (event: KeyboardEvent) => handleKeyDown(event, scene);
     const onKeyUp = (event: KeyboardEvent) => handleKeyUp(event);
@@ -359,6 +414,7 @@ const App: React.FC = () => {
     });
 
     return () => {
+      sound.stop();
       engine.dispose();
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
