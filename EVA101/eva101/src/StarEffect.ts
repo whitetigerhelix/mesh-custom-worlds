@@ -152,12 +152,33 @@ export class StarEffect {
 
     // Handle oscillator start/stop based on sound state
     if (this.autoStartSound) {
-      this.sound.play();
-      this.oscillator.start();
+      this.startAudio();
     }
     this.sound.onended = () => {
       this.oscillator.stop();
     };
+  }
+
+  public isAudioPlaying() {
+    return this.sound.isPlaying;
+  }
+
+  public toggleAudio() {
+    if (this.isAudioPlaying()) {
+      this.stopAudio();
+    } else {
+      this.startAudio();
+    }
+  }
+
+  public startAudio() {
+    this.sound.play();
+    this.oscillator.start();
+  }
+
+  public stopAudio() {
+    this.sound.stop();
+    this.oscillator.stop();
   }
 
   public update() {

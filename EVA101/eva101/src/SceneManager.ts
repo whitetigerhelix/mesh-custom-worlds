@@ -16,6 +16,8 @@ import { Planet } from "./Planet";
 import { StarEffect } from "./StarEffect";
 import { Inspector } from "@babylonjs/inspector";
 import cannon from "cannon";
+import { AdvancedDynamicTexture } from "@babylonjs/gui";
+import { Button } from "@babylonjs/gui";
 
 export class SceneManager {
   private engine: Engine;
@@ -109,6 +111,26 @@ export class SceneManager {
       this.update();
       this.scene.render();
     });
+
+    // Set up some simple UI
+    //TODO: Refactor to React UI overlay components instead
+    const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    const button = Button.CreateSimpleButton(
+      "toggleAudioButton",
+      "Toggle Star Audio"
+    );
+    button.width = "160px";
+    button.height = "40px";
+    button.color = "white";
+    button.background = "black";
+    button.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
+    button.verticalAlignment = Button.VERTICAL_ALIGNMENT_TOP;
+    button.top = "10px"; // Adjust as needed
+    button.left = "10px"; // Adjust as needed
+    button.onPointerUpObservable.add(() => {
+      this.starEffect.toggleAudio();
+    });
+    advancedTexture.addControl(button);
   }
 
   public update() {
