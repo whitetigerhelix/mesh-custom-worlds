@@ -10,6 +10,7 @@ import {
   ParticleSystem,
   Color4,
   ShadowGenerator,
+  CubeTexture,
 } from "@babylonjs/core";
 import {
   FreeCamera,
@@ -57,6 +58,20 @@ const App: React.FC = () => {
     const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
     light.intensity = LIGHT_INTENSITY;
 
+    //
+    // Create materials
+
+    const skybox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
+    const skyboxMaterial = new StandardMaterial("skyBoxMaterial", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.disableLighting = true;
+    skyboxMaterial.reflectionTexture = new CubeTexture(
+      "/textures/DefaultSkyCubeMap.png",
+      scene
+    );
+    skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skybox.material = skyboxMaterial;
+
     // Basic red material
     const redMaterial = new StandardMaterial("redMaterial", scene);
     redMaterial.diffuseColor = new Color3(1, 0, 0); // Red
@@ -74,11 +89,7 @@ const App: React.FC = () => {
       scene
     );
     sphereMaterial.emissiveColor = new Color3(0.1, 0.1, 0.3);
-    /*sphereMaterial.reflectionTexture = new CubeTexture(
-      "/textures/DefaultSkyCubeMap",
-      scene
-    );
-    sphereMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;*/
+    sphereMaterial.reflectionTexture = skyboxMaterial.reflectionTexture;
 
     // Terrain material
     const terrainMaterial = new StandardMaterial("terrainMaterial", scene);
@@ -93,6 +104,9 @@ const App: React.FC = () => {
       scene
     );
     terrainMaterial.emissiveColor = new Color3(0.0, 0.5, 0.0);
+
+    //
+    // Create meshes
 
     // Create a basic sphere
     const sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
@@ -269,6 +283,7 @@ const App: React.FC = () => {
     }
   };
 
+  // useEffect hook to set up the scene and handle lifecycle events
   useEffect(() => {
     if (!canvasRef.current) return;
 
