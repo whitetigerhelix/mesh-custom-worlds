@@ -119,14 +119,14 @@ export class SceneManager {
       "toggleAudioButton",
       "Toggle Star Audio"
     );
-    button.width = "160px";
-    button.height = "40px";
     button.color = "white";
     button.background = "black";
     button.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
     button.verticalAlignment = Button.VERTICAL_ALIGNMENT_TOP;
-    button.top = "10px"; // Adjust as needed
+    button.top = "75px"; // Adjust as needed
     button.left = "10px"; // Adjust as needed
+    button.width = "160px";
+    button.height = "40px";
     button.onPointerUpObservable.add(() => {
       this.starEffect.toggleAudio();
     });

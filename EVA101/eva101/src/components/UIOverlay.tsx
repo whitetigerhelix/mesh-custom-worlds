@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 
 const useStyles = makeStyles({
+  // overlay->container
   overlay: {
     position: "fixed",
     top: "60px",
@@ -27,10 +28,11 @@ const useStyles = makeStyles({
     flexDirection: "column",
     gap: "10px",
   },
+  // All-in-one
   overlayContainer: {
     position: "absolute",
-    top: "60px",
-    left: "0px",
+    top: "10px",
+    left: "10px",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -52,22 +54,23 @@ const UIOverlay: React.FC = () => {
   };
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.container}>
-        <label htmlFor="inputField" style={{ color: "white" }}>
-          Enter text:
-        </label>
-        <Input
-          id="inputField"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Enter text"
-          aria-label="Input field for text"
-        />
-        <Button onClick={handleButtonClick} aria-label="Print input to console">
-          Print to Console
-        </Button>
-      </div>
+    <div className={styles.overlayContainer}>
+      <label
+        htmlFor="inputField"
+        style={{ color: "white", marginRight: "10px" }}
+      >
+        Magic incantation:
+      </label>
+      <Input
+        id="inputField"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Enter text"
+        aria-label="Input field for text"
+      />
+      <Button onClick={handleButtonClick} aria-label="Print input to console">
+        Print to Console
+      </Button>
     </div>
   );
 };
