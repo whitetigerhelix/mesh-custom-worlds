@@ -38,6 +38,6 @@
   "bots": [],
   "composeExtensions": [],
   "permissions": ["identity", "messageTeamMembers"],
-
-  "validDomains": ["localhost"]
+  "validDomains": ["localhost"],
+  "devicePermissions": ["media"]
 }
