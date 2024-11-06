@@ -69,10 +69,12 @@ const App: React.FC = () => {
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.disableLighting = true;
     skyboxMaterial.reflectionTexture = new CubeTexture(
-      "/textures/DefaultSkyCubeMap.png",
+      "/textures/default_sky",
       scene
     );
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skybox.infiniteDistance = true;
+    skybox.renderingGroupId = 0;
     skybox.material = skyboxMaterial;
 
     // Basic red material
