@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "@babylonjs/core": "^7.32.4",
+    "cannon": "^0.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@babylonjs/inspector": "^7.32.5",
     "@eslint/js": "^9.13.0",
+    "@types/cannon": "^0.1.13",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

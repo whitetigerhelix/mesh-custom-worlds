@@ -11,6 +11,8 @@ import {
   Color4,
   ShadowGenerator,
   CubeTexture,
+  PhysicsImpostor,
+  Sound,
 } from "@babylonjs/core";
 import {
   FreeCamera,
@@ -19,6 +21,7 @@ import {
   MeshBuilder,
 } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
+import cannon from "cannon";
 
 // Constants
 const CAMERA_SPEED = 1.0;
@@ -194,7 +197,56 @@ const App: React.FC = () => {
     particleSystem.updateSpeed = 0.005;
     particleSystem.start();
 
+    // Add sound
+    const audioContext = new (window.AudioContext || window.AudioContext)();
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = "sine"; // You can change this to 'square', 'sawtooth', 'triangle'
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Set initial frequency in Hz
+    //oscillator.start();
+
+    //TODO: Need to stop all audio when scene is disposed
+    const sound = new Sound("tone", null, scene, null, {
+      autoplay: false, //true,
+      loop: true,
+      spatialSound: true,
+    });
+    const audioBuffer = audioContext.createBuffer(
+      1,
+      audioContext.sampleRate * 2,
+      audioContext.sampleRate
+    );
+    const channelData = audioBuffer.getChannelData(0);
+    for (let i = 0; i < channelData.length; i++) {
+      channelData[i] = Math.sin(
+        (2 * Math.PI * 440 * i) / audioContext.sampleRate
+      );
+    }
+    sound.setAudioBuffer(audioBuffer);
+    //    sound.attachToMesh(pointLight);
+    oscillator.connect(audioContext.destination);
+
+    //
+    // Physics
+    window.CANNON = cannon;
+
+    scene.enablePhysics();
+
+    /*sphere.physicsImpostor = new PhysicsImpostor(
+      sphere,
+      PhysicsImpostor.SphereImpostor,
+      { mass: 1 },
+      scene
+    );*/
+    terrain.physicsImpostor = new PhysicsImpostor(
+      terrain,
+      PhysicsImpostor.PlaneImpostor,
+      { mass: 0 },
+      scene
+    );
+
+    //
     // Animations/movement/etc
+
     scene.onBeforeRenderObservable.add(() => {
       // Rotate planet
       sphere.rotation.y += 0.01;
@@ -221,6 +273,10 @@ const App: React.FC = () => {
       particleSystem.color1 = newColor;
       particleSystem.color2 = newColor2;
       particleSystem.emitter = pointLight.position; // Update emitter position
+
+      // Modulate the tone frequency based on the color
+      const frequency = 220 + 220 * newColor.r; // Example: base frequency 220Hz, modulated by red component
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
     });
 
     return { engine, scene, camera };
