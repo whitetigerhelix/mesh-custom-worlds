@@ -32,7 +32,7 @@ const ORBIT_DISTANCE = 3;
 const ORBIT_SPEED = 0.001;
 const COLOR_TIME = 0.0025;
 const ROTATION_SPEED = 0.01;
-const BASE_TONE_FREQUENCY = 110; //440;
+const BASE_TONE_FREQUENCY = 96; //440;
 
 const useExtraObjects = false; // Set to true to use extra objects, set to false to have the clean planet scene
 
@@ -269,8 +269,11 @@ const App: React.FC = () => {
     sound.attachToMesh(starSphere);
 
     // Handle oscillator start/stop based on sound state
-    sound.play();
-    oscillator.start();
+    const autoStartSound = false; //TODO: Need a better way to handle audio
+    if (autoStartSound) {
+      sound.play();
+      oscillator.start();
+    }
     sound.onended = () => {
       oscillator.stop();
     };
@@ -308,11 +311,12 @@ const App: React.FC = () => {
       pointLight.position.y = sphere.position.y;
       pointLight.position.z = Math.cos(time) * ORBIT_DISTANCE;
 
-      // Animate the color
-      const colorTimeR = (Math.sin(Date.now() * COLOR_TIME) + 1) / 2;
-      const colorTimeG = (Math.cos(Date.now() * COLOR_TIME) + 1) / 2;
-      const colorTimeB = (Math.sin(Date.now() * COLOR_TIME * 0.5) + 1) / 2;
-      const alpha = (Math.cos(Date.now() * COLOR_TIME * 0.25) + 1) / 2;
+      // Animate the color using Perlin noise
+      const noise = (x: number) => (Math.sin(x) + 1) / 2;
+      const colorTimeR = noise(Date.now() * COLOR_TIME);
+      const colorTimeG = noise(Date.now() * COLOR_TIME + Math.PI / 2);
+      const colorTimeB = noise(Date.now() * COLOR_TIME + Math.PI);
+      const alpha = noise(Date.now() * COLOR_TIME + Math.PI / 4);
       const newColor = new Color4(colorTimeR, colorTimeG, colorTimeB, alpha);
       const newColor2 = new Color4(
         1.0 - newColor.r,
@@ -330,9 +334,11 @@ const App: React.FC = () => {
         pointLight.position.z
       );
 
-      // Modulate the tone frequency based on the color
+      // Modulate the tone frequency based on the orbit speed and noise
       const baseFrequency = BASE_TONE_FREQUENCY / 2;
-      const frequency = baseFrequency + baseFrequency * newColor.r; // Example: base frequency 220Hz, modulated by red component
+      const orbitSpeedFactor = Math.abs(Math.sin(time)) * 0.5 + 0.5; // Normalize to [0.5, 1.0]
+      const frequency =
+        baseFrequency + baseFrequency * orbitSpeedFactor * newColor.r; // Modulate by red component and orbit speed
       oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
     });
 
