@@ -48,29 +48,43 @@ const App: React.FC = () => {
     // Create a basic light
     const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
     light.intensity = LIGHT_INTENSITY;
-    /*
+
     // Basic red material
     const redMaterial = new StandardMaterial("redMaterial", scene);
     redMaterial.diffuseColor = new Color3(1, 0, 0); // Red
     redMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
-*/
+
     // "Planet" material
     const sphereMaterial = new StandardMaterial("sphereMaterial", scene);
     sphereMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
-    /*sphereMaterial.diffuseTexture = new Texture(
-      "./assets/textures/fractalplanet.jpg",
+    sphereMaterial.diffuseTexture = new Texture(
+      "/textures/fractalplanet.jpg",
       scene
-    );*/
-    /*sphereMaterial.bumpTexture = new Texture(
-      "./assets/textures/factalplanet_bump.jpg",
+    );
+    sphereMaterial.bumpTexture = new Texture(
+      "/textures/fractalplanet_bump.jpg",
       scene
-    );*/
+    );
     sphereMaterial.emissiveColor = new Color3(0.1, 0.1, 0.3);
     /*sphereMaterial.reflectionTexture = new CubeTexture(
-      "./assets/textures/Skybox_Lakehouse_Sun",
+      "/textures/DefaultSkyCubeMap",
       scene
     );
     sphereMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;*/
+
+    // Terrain material
+    const terrainMaterial = new StandardMaterial("terrainMaterial", scene);
+    terrainMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
+    terrainMaterial.diffuseColor = new Color3(0.0, 1.0, 0.0);
+    terrainMaterial.diffuseTexture = new Texture(
+      "/textures/terrain_heightmap.jpg",
+      scene
+    );
+    terrainMaterial.bumpTexture = new Texture(
+      "/textures/terrain_heightmap.jpg",
+      scene
+    );
+    terrainMaterial.emissiveColor = new Color3(0.0, 0.5, 0.0);
 
     // Create a basic sphere
     const sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
@@ -78,11 +92,23 @@ const App: React.FC = () => {
     sphere.material = sphereMaterial;
 
     // Add a plane below the sphere
-    /*const ground =*/ MeshBuilder.CreateGround(
+    /*    const ground = MeshBuilder.CreateGround(
       "ground1",
       { width: 6, height: 6 },
       scene
     );
+    ground.position.set(0, 0, 0);
+*/
+    const terrain = MeshBuilder.CreateGround(
+      "terrain",
+      {
+        width: 25,
+        height: 25,
+      },
+      scene
+    );
+    terrain.position.set(0, -1, 0);
+    terrain.material = terrainMaterial;
     /*
     const goldberg = MeshBuilder.CreateGoldberg("goldberg", { size: 1 }, scene);
     goldberg.position.set(0, 3, 0);
@@ -100,6 +126,12 @@ const App: React.FC = () => {
     cylinder.position.set(-3, 1, 0);
     cylinder.material = redMaterial;
 */
+
+    // Animations/movement/etc
+    scene.onBeforeRenderObservable.add(() => {
+      sphere.rotation.y += 0.01;
+    });
+
     return { engine, scene, camera };
   };
 
