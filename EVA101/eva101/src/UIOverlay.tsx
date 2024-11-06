@@ -21,8 +21,8 @@ const useStyles = makeStyles({
   },
   container: {
     backgroundColor: "gray",
-    padding: "20px",
-    borderRadius: "8px",
+    ...shorthands.padding("20px"),
+    ...shorthands.borderRadius("8px"),
     display: "flex",
     flexDirection: "column",
     gap: "10px",
@@ -43,7 +43,7 @@ const useStyles = makeStyles({
   },
 });
 
-const UIOverlay = () => {
+const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
 
@@ -52,19 +52,23 @@ const UIOverlay = () => {
   };
 
   return (
-    //<div className={styles.overlay}>
-    //<div className={styles.container}>
-    <div className={styles.overlayContainer}>
-      <Input
-        className={styles.input}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter text"
-      />
-      <Button onClick={handleButtonClick}>Print to Console</Button>
+    <div className={styles.overlay}>
+      <div className={styles.container}>
+        <label htmlFor="inputField" style={{ color: "white" }}>
+          Enter text:
+        </label>
+        <Input
+          id="inputField"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Enter text"
+          aria-label="Input field for text"
+        />
+        <Button onClick={handleButtonClick} aria-label="Print input to console">
+          Print to Console
+        </Button>
+      </div>
     </div>
-    //</div>
-    //</div>
   );
 };
 
