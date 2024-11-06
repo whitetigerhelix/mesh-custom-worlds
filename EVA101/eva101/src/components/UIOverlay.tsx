@@ -51,6 +51,28 @@ const UIOverlay: React.FC = () => {
 
   const handleButtonClick = () => {
     console.log("Button clicked with input:", inputValue);
+
+    // Use the fetch API to send a POST request to the local LLM server: http://127.0.0.1:5000/get_completion
+    sendPostRequest(inputValue);
+  };
+
+  const sendPostRequest = async (input: string) => {
+    try {
+      // Send POST request
+      const response = await fetch("http://127.0.0.1:5000/get_completion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ input }),
+      });
+
+      // Get response
+      const data = await response.json();
+      console.log("Response from server:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -65,11 +87,12 @@ const UIOverlay: React.FC = () => {
         id="inputField"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter text"
+        placeholder="Enter text for LLM"
         aria-label="Input field for text"
+        className={styles.input}
       />
       <Button onClick={handleButtonClick} aria-label="Print input to console">
-        Print to Console
+        Hit the LLM
       </Button>
     </div>
   );
