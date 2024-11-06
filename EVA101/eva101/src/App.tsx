@@ -9,6 +9,7 @@ import {
   GlowLayer,
   ParticleSystem,
   Color4,
+  ShadowGenerator,
 } from "@babylonjs/core";
 import {
   FreeCamera,
@@ -52,7 +53,7 @@ const App: React.FC = () => {
     // Improve mouse look responsiveness
     camera.angularSensibility = CAMERA_ANGULAR_SENSITIVITY;
 
-    // Create a basic light
+    // Create a basic light and shadow generator
     const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
     light.intensity = LIGHT_INTENSITY;
 
@@ -105,6 +106,7 @@ const App: React.FC = () => {
       scene
     );
     ground.position.set(0, 0, 0);
+    ground.receiveShadows = true;
 */
     const terrain = MeshBuilder.CreateGround(
       "terrain",
@@ -116,6 +118,8 @@ const App: React.FC = () => {
     );
     terrain.position.set(0, -1, 0);
     terrain.material = terrainMaterial;
+    terrain.receiveShadows = true;
+
     /*
     const goldberg = MeshBuilder.CreateGoldberg("goldberg", { size: 1 }, scene);
     goldberg.position.set(0, 3, 0);
@@ -134,12 +138,17 @@ const App: React.FC = () => {
     cylinder.material = redMaterial;
 */
 
-    // Dynamic lights
+    // Dynamic lights and shadow
     const pointLight = new PointLight(
       "pointLight",
       new Vector3(0, 1, 0),
       scene
     );
+
+    const shadowGenerator = new ShadowGenerator(1024, pointLight);
+    shadowGenerator.usePoissonSampling = true;
+    shadowGenerator.darkness = 0.05;
+    shadowGenerator.addShadowCaster(sphere);
 
     // Add glow layer for star effect
     const glowLayer = new GlowLayer("glow", scene);
