@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from "react";
-import { Engine, Scene } from "@babylonjs/core";
+import {
+  Color3,
+  Engine,
+  Scene,
+  StandardMaterial,
+  Texture,
+} from "@babylonjs/core";
 import {
   FreeCamera,
   Vector3,
@@ -42,23 +48,49 @@ const App: React.FC = () => {
     // Create a basic light
     const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
     light.intensity = LIGHT_INTENSITY;
+    /*
+    // Basic red material
+    const redMaterial = new StandardMaterial("redMaterial", scene);
+    redMaterial.diffuseColor = new Color3(1, 0, 0); // Red
+    redMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
+*/
+    // "Planet" material
+    const sphereMaterial = new StandardMaterial("sphereMaterial", scene);
+    sphereMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
+    /*sphereMaterial.diffuseTexture = new Texture(
+      "./assets/textures/fractalplanet.jpg",
+      scene
+    );*/
+    /*sphereMaterial.bumpTexture = new Texture(
+      "./assets/textures/factalplanet_bump.jpg",
+      scene
+    );*/
+    sphereMaterial.emissiveColor = new Color3(0.1, 0.1, 0.3);
+    /*sphereMaterial.reflectionTexture = new CubeTexture(
+      "./assets/textures/Skybox_Lakehouse_Sun",
+      scene
+    );
+    sphereMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;*/
 
     // Create a basic sphere
     const sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
     sphere.position.y = 1;
+    sphere.material = sphereMaterial;
 
     // Add a plane below the sphere
-    const ground = MeshBuilder.CreateGround(
+    /*const ground =*/ MeshBuilder.CreateGround(
       "ground1",
       { width: 6, height: 6 },
       scene
     );
-
+    /*
     const goldberg = MeshBuilder.CreateGoldberg("goldberg", { size: 1 }, scene);
     goldberg.position.set(0, 3, 0);
-
+    goldberg.material = redMaterial;
+    
     const box = MeshBuilder.CreateBox("box", { size: 1 }, scene);
     box.position.set(3, 1, 0);
+    box.material = redMaterial;
 
     const cylinder = MeshBuilder.CreateCylinder(
       "cylinder",
@@ -66,26 +98,21 @@ const App: React.FC = () => {
       scene
     );
     cylinder.position.set(-3, 1, 0);
-
+    cylinder.material = redMaterial;
+*/
     return { engine, scene, camera };
   };
 
   const renderScene = (scene: Scene, camera: FreeCamera) => {
-    console.log(
-      "renderScene - [moveUp: " +
-        moveUpRef.current +
-        ", moveDown: " +
-        moveDownRef.current +
-        "]"
-    );
+    //console.log("renderScene - [moveUp: " + moveUpRef.current + ", moveDown: " + moveDownRef.current + "]");
 
     if (moveUpRef.current) {
       camera.position.y += camera.speed * CAMERA_VERTICAL_SPEED_FACTOR;
-      console.log("moveUp: " + camera.position.y);
+      //console.log("moveUp: " + camera.position.y);
     }
     if (moveDownRef.current) {
       camera.position.y -= camera.speed * CAMERA_VERTICAL_SPEED_FACTOR;
-      console.log("moveDown: " + camera.position.y);
+      //console.log("moveDown: " + camera.position.y);
     }
 
     //TODO: Add custom rendering code here
@@ -106,7 +133,7 @@ const App: React.FC = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent, scene: Scene) => {
-    console.log("KeyDown: " + event.key + " [Control: " + event.ctrlKey + "]");
+    //console.log("KeyDown: " + event.key + " [Control: " + event.ctrlKey + "]");
 
     // Toggle inspector with Ctrl + I
     if (event.ctrlKey && event.key === "i") {
