@@ -1,6 +1,6 @@
 import { teamsDarkTheme, createDarkTheme } from "@fluentui/react-components";
 
-const appTheme = createDarkTheme({
+const AppTheme = createDarkTheme({
   ...teamsDarkTheme, // Extend from an existing theme
   colorPalette: {
     brand: {
@@ -18,4 +18,4 @@ const appTheme = createDarkTheme({
   // Define other design tokens as needed
 });
 
-export default appTheme;
+export default AppTheme;

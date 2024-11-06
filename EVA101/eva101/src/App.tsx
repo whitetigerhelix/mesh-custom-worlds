@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { SceneManager } from "./SceneManager";
-import UIOverlay from "./UIOverlay";
+import { SceneManager } from "./classes/SceneManager";
+import UIOverlay from "./components/UIOverlay";
 import { makeStyles } from "@fluentui/react-components";
 
 const useStyles = makeStyles({

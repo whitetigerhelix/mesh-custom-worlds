@@ -23,7 +23,7 @@ export class StarEffect {
   private scene: Scene;
   private shadowGenerator: ShadowGenerator;
 
-  public autoStartSound: boolean = false; //true;
+  public autoStartSound: boolean = false;
 
   ORBIT_DISTANCE = 3;
   ORBIT_SPEED = 0.001;
