@@ -4,15 +4,27 @@ import { Mic24Filled } from "@fluentui/react-icons";
 
 interface SpeechRecognitionButtonProps {
   onClick: () => void;
+  onError: (error: string) => void;
 }
 
 const SpeechRecognitionButton: React.FC<SpeechRecognitionButtonProps> = ({
   onClick,
+  onError,
 }) => {
+  const handleClick = () => {
+    if (
+      !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+    ) {
+      onError("Speech recognition is not supported in this browser.");
+      return;
+    }
+    onClick();
+  };
+
   return (
     <Button
       icon={<Mic24Filled />}
-      onClick={onClick}
+      onClick={handleClick}
       aria-label="Commence Auditory Reception"
       style={{ margin: "10px" }}
     >

@@ -55,7 +55,16 @@ const AGENT_INITIAL_GREETING =
   "And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?";
 const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'Why, a brisk walk and a touch of laudanum, naturally!'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.`;
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 const UIOverlay: React.FC = () => {
+  console.log("UIOverlay component rendered");
+
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
   const hasInitialized = useRef(false);
@@ -109,7 +118,7 @@ const UIOverlay: React.FC = () => {
   });
 
   useEffect(() => {
-    setTimeout(async () => {
+    const initialize = async () => {
       const savedVoice = localStorage.getItem("selectedVoice");
       console.log(
         "useEffect UIOverlay - hasInitialized: " +
@@ -127,7 +136,10 @@ const UIOverlay: React.FC = () => {
           speakText(AGENT_INITIAL_GREETING, savedVoice || "");
         }
       }
-    }, 150);
+    };
+
+    const timer = setTimeout(initialize, 150);
+    return () => clearTimeout(timer);
   }, [isVoiceEnabled]);
 
   const addToConversation = async (
@@ -139,15 +151,35 @@ const UIOverlay: React.FC = () => {
     );
 
     // Add the new message to the conversation
-    return new Promise<void>((resolve) => {
-      setConversation((prev) => {
-        const updatedConversation = [...prev, { role, content }];
-        //console.log("Updated Conversation:",JSON.stringify(updatedConversation, null, 2));
-        //console.log("Updated Request body:", JSON.stringify(updateRequestBody(requestBody, updatedConversation), null, 2));
-        resolve();
-        return updatedConversation;
-      });
-    });
+    return new Promise<{ role: "user" | "assistant"; content: string }[]>(
+      (resolve) => {
+        setConversation((prev) => {
+          const updatedConversation = [...prev, { role, content }];
+
+          // Debugging
+          console.trace(
+            "Updated Conversation with new message: \n{ " +
+              role +
+              ", " +
+              content +
+              " } \n\n" +
+              "Updated Conversation: \n" +
+              JSON.stringify(updatedConversation, null, 2) +
+              "\n\n" +
+              "Updated Request body: \n" +
+              JSON.stringify(
+                updateRequestBody(requestBody, updatedConversation),
+                null,
+                2
+              )
+          );
+
+          resolve(updatedConversation);
+
+          return updatedConversation;
+        });
+      }
+    );
   };
 
   const updateRequestBody = (
@@ -158,24 +190,46 @@ const UIOverlay: React.FC = () => {
       ...initialRequestBody.chat_history,
       ...conversation,
     ];
-    return { ...initialRequestBody, chat_history: updatedChatHistory };
+
+    console.log(
+      "updateRequestBody 1 - Chat History: ",
+      initialRequestBody.chat_history
+    );
+    console.log("updateRequestBody 2 - New Conversation: ", conversation);
+    console.log(
+      "updateRequestBody 3 - Updated Chat History: ",
+      updatedChatHistory
+    );
+
+    const updatedRequestBody = {
+      ...initialRequestBody,
+      chat_history: updatedChatHistory,
+    };
+
+    console.log(
+      "updateRequestBody 4 - Updated Request Body: ",
+      updatedRequestBody
+    );
+
+    return updatedRequestBody;
   };
 
   const handleButtonClick = async () => {
     console.log("User asks assistant the following: ", inputValue);
 
-    await addToConversation("user", inputValue);
-
-    sendPostRequest();
+    const updatedConvo = await addToConversation("user", inputValue);
+    await sendPostRequest(updatedConvo);
 
     // Clear the input field for next query
     setInputValue("");
   };
 
-  const sendPostRequest = async () => {
+  const sendPostRequest = async (
+    updatedConvo: { role: "user" | "assistant"; content: string }[]
+  ) => {
     try {
       // Get the current request body as a string
-      const currentRequestBody = updateRequestBody(requestBody, conversation);
+      const currentRequestBody = updateRequestBody(requestBody, updatedConvo);
       const requestBodyString = JSON.stringify(currentRequestBody);
       console.log(
         "Sending Post with Request body:",
@@ -279,13 +333,13 @@ const UIOverlay: React.FC = () => {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: { results: { transcript: any }[][] }) => {
       const speechResult = event.results[0][0].transcript;
       console.log("Speech recognition result:", speechResult);
       setInputValue(speechResult);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: { error: any }) => {
       console.error("Speech recognition error:", event.error);
     };
 
@@ -294,7 +348,12 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlayContainer}>
-      <SpeechRecognitionButton onClick={handleSpeechRecognition} />
+      <SpeechRecognitionButton
+        onClick={handleSpeechRecognition}
+        onError={function (error: string): void {
+          throw new Error("Function not implemented: " + error);
+        }}
+      />
       <InputSelect
         inputValue={inputValue}
         setInputValue={setInputValue}

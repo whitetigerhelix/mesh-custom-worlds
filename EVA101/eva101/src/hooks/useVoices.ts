@@ -8,7 +8,7 @@ const useVoices = () => {
   useEffect(() => {
     const populateVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
-      console.log("Available voices:", availableVoices);
+      console.debug("Available voices:", availableVoices);
       setVoices(availableVoices);
       if (availableVoices.length > 0) {
         const savedVoice = localStorage.getItem("selectedVoice");
