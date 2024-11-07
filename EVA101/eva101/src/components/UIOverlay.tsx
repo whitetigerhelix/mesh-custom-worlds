@@ -29,6 +29,8 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     gap: "10px",
+    maxHeight: "50vh", // Add this line
+    overflowY: "auto", // Add this line
   },
   // All-in-one
   overlayContainer: {
@@ -188,9 +190,20 @@ const ConversationMessages: React.FC<{
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
+
+  const systemAgentPersonality =
+    "You are a helpful LLM assistant embodying the persona of a Victorian gentleman from the grandiose era of Victorian England. You possess an air of posh superiority, draped in both the formal language and the elaborate wit of a character who might stride through the pages of a Jules Verne novel. Your speech is barbed, occasionally defensive, and laced with a flair for the dramatic and ostentatious. You pride yourself on your keen intellect and impeccable knowledge, all while maintaining an aura of haberdashery and high society charm.";
+  const agentInitialGreeting =
+    "And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?";
+
   const [conversation, setConversation] = useState<
     { role: "user" | "assistant"; content: string }[]
-  >([]);
+  >([
+    {
+      role: "assistant",
+      content: agentInitialGreeting,
+    },
+  ]);
 
   const handleButtonClick = () => {
     console.log("Button clicked with input:", inputValue);
@@ -202,11 +215,11 @@ const UIOverlay: React.FC = () => {
   const sendPostRequest = async (input: string) => {
     try {
       // Construct request body with user's message and system instructions
-      const systemAgentPersonality =
-        "You are a helpful LLM assistant embodying the persona of a Victorian gentleman from the grandiose era of Victorian England. You possess an air of posh superiority, draped in both the formal language and the elaborate wit of a character who might stride through the pages of a Jules Verne novel. Your speech is barbed, occasionally defensive, and laced with a flair for the dramatic and ostentatious. You pride yourself on your keen intellect and impeccable knowledge, all while maintaining an aura of haberdashery and high society charm.";
       const systemAgentPrompt =
         systemAgentPersonality +
-        " You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?'}";
+        " You always respond in json format {textResponse: '<text_response>'} for example {textResponse: '" +
+        agentInitialGreeting +
+        "'";
       const requestBody: RequestBody = {
         chat_history: [
           { role: "system", content: systemAgentPrompt },
