@@ -45,7 +45,7 @@ const useVoice = () => {
     text: string,
     voiceName: string,
     pitch: number = 1.0, // Lower pitch for deeper sound
-    rate: number = 1.5 // Higher rate for quicker speech
+    rate: number = 1.3 // Higher rate for quicker speech
   ) => {
     if (currentUtterance.current) {
       speechSynthesis.cancel();

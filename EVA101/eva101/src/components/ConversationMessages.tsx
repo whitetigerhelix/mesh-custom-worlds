@@ -3,7 +3,8 @@ import { makeStyles, shorthands } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
   container: {
-    backgroundColor: "gray",
+    backgroundColor: "brown",
+    opacity: 1,
     ...shorthands.padding("20px"),
     ...shorthands.borderRadius("8px"),
     display: "flex",
@@ -28,10 +29,12 @@ const useStyles = makeStyles({
   userMessage: {
     alignSelf: "flex-end",
     backgroundColor: "blue",
+    opacity: 1,
   },
   assistantMessage: {
     alignSelf: "flex-start",
     backgroundColor: "green",
+    opacity: 1,
   },
   highlightedMessage: {
     transform: "scale(1.05)",
@@ -39,8 +42,8 @@ const useStyles = makeStyles({
     ...shorthands.padding("15px"),
   },
   collapsedMessage: {
-    maxHeight: "16px",
-    minHeight: "16px",
+    maxHeight: "24px",
+    minHeight: "24px",
     overflow: "hidden",
     cursor: "pointer",
     fontSize: "0.6em",

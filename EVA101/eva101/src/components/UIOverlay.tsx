@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { makeStyles, shorthands } from "@fluentui/react-components";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
-import { appLightTheme } from "../EvaTheme";
+import { appDarkTheme } from "../EvaTheme";
 import InputSelect from "./InputSelect";
 import VoiceSelector from "./VoiceSelector";
 import ConversationMessages from "./ConversationMessages";
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     ...shorthands.padding("20px"),
   },
   container: {
-    backgroundColor: appLightTheme.colorNeutralBackground1,
+    backgroundColor: appDarkTheme.colorBrandBackground,
     ...shorthands.padding("20px"),
     ...shorthands.borderRadius("8px"),
     display: "flex",
@@ -41,11 +41,26 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignItems: "center",
     ...shorthands.padding("10px"),
-    backgroundColor: "rgba(92, 92, 92, 0.8)",
+    //backgroundColor: "rgba(92, 92, 92, 0.8)",
+    backgroundImage: "url('/textures/ui_background.jpg')",
+    backgroundSize: "cover",
     ...shorthands.borderRadius("4px"),
-    width: "400px",
-    maxHeight: "80vh",
+    width: "60%", // Full width of texture
+    maxHeight: "50vh",
     overflowY: "auto",
+  },
+  conversationContainer: {
+    display: "flex",
+    flexDirection: "column-reverse", // Anchor to bottom
+    overflowY: "auto",
+    maxHeight: "100%",
+  },
+  title: {
+    fontFamily: "'Cinzel', serif",
+    fontSize: "2.5rem",
+    color: "#FFD700",
+    textShadow: "2px 2px 4px #000000",
+    marginBottom: "20px",
   },
 });
 
@@ -117,6 +132,14 @@ const UIOverlay: React.FC = () => {
       max_tokens: 150,
     },
   });
+
+  const conversationEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (conversationEndRef.current) {
+      conversationEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [conversation]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -327,6 +350,7 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlayContainer}>
+      <h1 className={styles.title}>The Learned Companion</h1>
       <SpeechRecognitionButton
         onClick={handleSpeechRecognition}
         onError={function (error: string): void {
@@ -345,7 +369,10 @@ const UIOverlay: React.FC = () => {
         isVoiceEnabled={isVoiceEnabled}
         setIsVoiceEnabled={setIsVoiceEnabled}
       />
-      <ConversationMessages conversation={conversation || []} />
+      <div className={styles.conversationContainer}>
+        <ConversationMessages conversation={conversation || []} />
+        <div ref={conversationEndRef} />
+      </div>
     </div>
   );
 };
