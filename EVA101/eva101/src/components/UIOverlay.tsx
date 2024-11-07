@@ -6,6 +6,7 @@ import InputSelect from "./InputSelect";
 import VoiceSelector from "./VoiceSelector";
 import ConversationMessages from "./ConversationMessages";
 import useVoices from "../hooks/useVoices";
+import SpeechRecognitionButton from "./SpeechRecognitionButton";
 
 const useStyles = makeStyles({
   // overlay->container
@@ -271,8 +272,29 @@ const UIOverlay: React.FC = () => {
     }
   };
 
+  const handleSpeechRecognition = () => {
+    const recognition = new (window.SpeechRecognition ||
+      window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      console.log("Speech recognition result:", speechResult);
+      setInputValue(speechResult);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.start();
+  };
+
   return (
     <div className={styles.overlayContainer}>
+      <SpeechRecognitionButton onClick={handleSpeechRecognition} />
       <InputSelect
         inputValue={inputValue}
         setInputValue={setInputValue}
