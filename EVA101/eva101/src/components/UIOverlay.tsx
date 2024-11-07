@@ -218,9 +218,10 @@ const UIOverlay: React.FC = () => {
       // Construct request body with user's message and system instructions
       const systemAgentPrompt =
         systemAgentPersonality +
-        " You always respond in json format {textResponse: '<text_response>'} for example {textResponse: '" +
+        " You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: '" +
         agentInitialGreeting +
-        "'";
+        "'. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' " +
+        "Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.";
       const requestBody: RequestBody = {
         chat_history: [
           { role: "system", content: systemAgentPrompt },
@@ -241,7 +242,7 @@ const UIOverlay: React.FC = () => {
         user_message: input, // Add the user's input as the current message
         llm_params: {
           model: "dev-gpt-35-1106-chat-completions",
-          temp: 0.7,
+          temp: 0.9,
           top_p: 0.9,
           max_tokens: 150,
         },
