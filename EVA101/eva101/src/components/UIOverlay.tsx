@@ -3,6 +3,7 @@ import {
   Input,
   makeStyles,
   shorthands,
+  Textarea,
 } from "@fluentui/react-components";
 import { useState } from "react";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
@@ -44,11 +45,26 @@ const useStyles = makeStyles({
   input: {
     marginRight: "10px",
   },
+  responseContainer: {
+    marginTop: "10px",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    ...shorthands.padding("10px"),
+    ...shorthands.borderRadius("4px"),
+    maxWidth: "600px",
+    wordWrap: "break-word",
+  },
+  textarea: {
+    width: "100%",
+    resize: "vertical",
+  },
 });
 
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
+  const [assistantResponse, setAssistantResponse] = useState<string | null>(
+    null
+  );
 
   const handleButtonClick = () => {
     console.log("Button clicked with input:", inputValue);
@@ -120,6 +136,7 @@ const UIOverlay: React.FC = () => {
           assistantMessageContent
         );
         console.log("Assistant's message:", assistantMessage.textResponse);
+        setAssistantResponse(assistantMessage.textResponse);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
       }
@@ -137,19 +154,25 @@ const UIOverlay: React.FC = () => {
         htmlFor="inputField"
         style={{ color: "white", marginRight: "10px" }}
       >
-        Magic incantation:
+        Present Your Inquiry Adjacent, if You Please
       </label>
-      <Input
+      <Textarea
         id="inputField"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter text for LLM"
+        placeholder="Kindly inscribe your esteemed query here..."
         aria-label="Input field for text"
-        className={styles.input}
+        className={styles.textarea}
       />
       <Button onClick={handleButtonClick} aria-label="Print input to console">
-        Hit the LLM
+        Dispatch Thy Query
       </Button>
+      {assistantResponse && (
+        <div className={styles.responseContainer}>
+          <strong>The Scholarly Aide's Retort:</strong>
+          <p>{assistantResponse}</p>
+        </div>
+      )}
     </div>
   );
 };
