@@ -323,12 +323,12 @@ const UIOverlay: React.FC = () => {
     return { ...initialRequestBody, chat_history: updatedChatHistory };
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     console.log("User asks assistant the following: ", inputValue);
 
-    addToConversation("user", inputValue).then(() => {
-      sendPostRequest();
-    });
+    await addToConversation("user", inputValue);
+
+    sendPostRequest();
 
     // Clear the input field for next query
     setInputValue("");
@@ -353,11 +353,20 @@ const UIOverlay: React.FC = () => {
         body: requestBodyString,
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       // Get LLM response data
       const data: LLMResponse = await response.json();
       handleResponse(data);
     } catch (error) {
       console.error("Error:", error);
+
+      await addToConversation(
+        "assistant",
+        "My sincerest apologies, but it appears I am unable to fulfill your request at this moment. I entreat you to exercise patience and attempt once more at a later juncture."
+      );
     }
   };
 
