@@ -4,6 +4,7 @@ import {
   shorthands,
   Textarea,
   Select,
+  Checkbox,
 } from "@fluentui/react-components";
 import { useState, useRef, useEffect } from "react";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
@@ -118,6 +119,8 @@ const InputSection: React.FC<{
   selectedVoice: string;
   setSelectedVoice: React.Dispatch<React.SetStateAction<string>>;
   voices: SpeechSynthesisVoice[];
+  isVoiceEnabled: boolean;
+  setIsVoiceEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   inputValue,
   setInputValue,
@@ -125,6 +128,8 @@ const InputSection: React.FC<{
   selectedVoice,
   setSelectedVoice,
   voices,
+  isVoiceEnabled,
+  setIsVoiceEnabled,
 }) => {
   const styles = useStyles();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -148,7 +153,11 @@ const InputSection: React.FC<{
       />
       <Select
         value={selectedVoice}
-        onChange={(_, data) => setSelectedVoice(data.value)}
+        onChange={(_, data) => {
+          console.log("Selected voice changed:", data.value);
+          setSelectedVoice(data.value);
+          localStorage.setItem("selectedVoice", data.value); // Save selected voice to localStorage
+        }}
         aria-label="Select voice"
         style={{ marginTop: "10px", width: "400px" }}
       >
@@ -158,6 +167,12 @@ const InputSection: React.FC<{
           </option>
         ))}
       </Select>
+      <Checkbox
+        label="Activate the Voice of the Scholarly Aide"
+        checked={isVoiceEnabled}
+        onChange={(_, data) => setIsVoiceEnabled(data.checked as boolean)}
+        style={{ marginTop: "10px" }}
+      />
       <Button
         onClick={handleButtonClick}
         aria-label="Print input to console"
@@ -222,7 +237,9 @@ const UIOverlay: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("");
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const hasInitialized = useRef(false);
+  const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     const populateVoices = () => {
@@ -230,7 +247,13 @@ const UIOverlay: React.FC = () => {
       console.log("Available voices:", availableVoices);
       setVoices(availableVoices);
       if (availableVoices.length > 0) {
-        setSelectedVoice(availableVoices[0].name);
+        const savedVoice = localStorage.getItem("selectedVoice");
+        console.log("Saved voice:", savedVoice);
+        if (savedVoice) {
+          setSelectedVoice(savedVoice);
+        } else {
+          setSelectedVoice(availableVoices[0].name);
+        }
       }
     };
 
@@ -240,17 +263,25 @@ const UIOverlay: React.FC = () => {
     }
 
     setTimeout(async () => {
+      const savedVoice = localStorage.getItem("selectedVoice");
       console.log(
-        "useEffect UIOverlay - hasInitialized: " + hasInitialized.current
+        "useEffect UIOverlay - hasInitialized: " +
+          hasInitialized.current +
+          " | isVoiceEnabled: " +
+          isVoiceEnabled +
+          " | savedVoice: " +
+          savedVoice
       );
       if (!hasInitialized.current) {
         await addToConversation("assistant", AGENT_INITIAL_GREETING);
         hasInitialized.current = true;
 
-        speakText(AGENT_INITIAL_GREETING, selectedVoice);
+        if (isVoiceEnabled) {
+          speakText(AGENT_INITIAL_GREETING, savedVoice || "");
+        }
       }
     }, 150);
-  }, []);
+  }, [isVoiceEnabled]);
 
   // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
   /*
@@ -370,7 +401,26 @@ const UIOverlay: React.FC = () => {
     }
   };
 
-  const speakText = (text: string, voiceName: string) => {
+  // Wait for voices to be ready
+  const waitForVoices = () =>
+    new Promise<void>((resolve) => {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        resolve();
+      } else {
+        speechSynthesis.onvoiceschanged = () => {
+          resolve();
+        };
+      }
+    });
+
+  const speakText = async (text: string, voiceName: string) => {
+    if (currentUtterance.current) {
+      speechSynthesis.cancel();
+    }
+
+    await waitForVoices();
+
     const utterance = new SpeechSynthesisUtterance(text);
     const selectedVoice = speechSynthesis
       .getVoices()
@@ -378,6 +428,10 @@ const UIOverlay: React.FC = () => {
     if (selectedVoice) {
       utterance.voice = selectedVoice;
     }
+    console.log(
+      "VoiceName: " + voiceName + " | Selected voice:" + selectedVoice
+    );
+    currentUtterance.current = utterance;
     speechSynthesis.speak(utterance);
   };
 
@@ -396,7 +450,9 @@ const UIOverlay: React.FC = () => {
           assistantMessage.textResponse
         );
 
-        speakText(assistantMessage.textResponse, selectedVoice);
+        if (isVoiceEnabled) {
+          speakText(assistantMessage.textResponse, selectedVoice);
+        }
         await addToConversation("assistant", assistantMessage.textResponse);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
@@ -418,6 +474,8 @@ const UIOverlay: React.FC = () => {
         selectedVoice={selectedVoice}
         setSelectedVoice={setSelectedVoice}
         voices={voices}
+        isVoiceEnabled={isVoiceEnabled}
+        setIsVoiceEnabled={setIsVoiceEnabled}
       />
       <ConversationMessages conversation={conversation || []} />
     </div>
