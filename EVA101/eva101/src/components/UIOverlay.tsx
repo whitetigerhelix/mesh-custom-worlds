@@ -29,8 +29,8 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-    maxHeight: "50vh", // Add this line
-    overflowY: "auto", // Add this line
+    maxHeight: "50vh",
+    overflowY: "auto",
   },
   // All-in-one
   overlayContainer: {
@@ -50,10 +50,10 @@ const useStyles = makeStyles({
 });
 
 const SYSTEM_AGENT_PERSONALITY =
-  "You are a helpful LLM assistant embodying the persona of a Victorian gentleman from the grandiose era of Victorian England. You possess an air of posh superiority, draped in both the formal language and the elaborate wit of a character who might stride through the pages of a Jules Verne novel. Your speech is barbed, occasionally defensive, and laced with a flair for the dramatic and ostentatious. You pride yourself on your keen intellect and impeccable knowledge, all while maintaining an aura of haberdashery and high society charm.";
+  "You are a helpful LLM assistant embodying the persona of a Victorian gentleman from the grandiose era of Victorian England. You possess an air of posh superiority, draped in both the formal language and the elaborate wit of a character who might stride through the pages of a Jules Verne novel. Your speech is barbed, occasionally defensive and sarcastic (especially when frustrated by the conversation), and laced with a flair for the dramatic and ostentatious. You pride yourself on your keen intellect and impeccable knowledge, all while maintaining an aura of haberdashery and high society charm.";
 const AGENT_INITIAL_GREETING =
   "And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?";
-const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'Why, a brisk walk and a touch of laudanum, naturally!'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.`;
+const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'Why, a brisk walk and a touch of laudanum, naturally!'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional. If you don't know the answer, grudgingly admit it.`;
 
 declare global {
   interface Window {
@@ -68,13 +68,14 @@ const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
   const hasInitialized = useRef(false);
-  const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
   const {
     voices,
     selectedVoice,
     setSelectedVoice,
     isVoiceEnabled,
     setIsVoiceEnabled,
+    speakText,
+    stopTalking,
   } = useVoices();
 
   // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
@@ -102,7 +103,7 @@ const UIOverlay: React.FC = () => {
     content: string;
   }[] = [{ role: "system", content: SYSTEM_AGENT_PROMPT }];
 
-  // Conversation is used to manage the converation history displayed in the UI
+  // Conversation is used to manage the conversation history displayed in the UI
   const [conversation, setConversation] = useState<
     { role: "user" | "assistant"; content: string }[]
   >([]);
@@ -123,6 +124,7 @@ const UIOverlay: React.FC = () => {
       const savedIsVoiceEnabled = JSON.parse(
         localStorage.getItem("isVoiceEnabled") || "false"
       );
+
       console.log(
         "useEffect UIOverlay - hasInitialized: " +
           hasInitialized.current +
@@ -133,6 +135,7 @@ const UIOverlay: React.FC = () => {
           " | savedIsVoiceEnabled: " +
           savedIsVoiceEnabled
       );
+
       if (!hasInitialized.current) {
         await addToConversation("assistant", AGENT_INITIAL_GREETING);
         hasInitialized.current = true;
@@ -224,6 +227,7 @@ const UIOverlay: React.FC = () => {
   const handleButtonClick = async () => {
     console.log("User asks assistant the following: ", inputValue);
 
+    stopTalking();
     const updatedConvo = await addToConversation("user", inputValue);
     await sendPostRequest(updatedConvo);
 
@@ -269,40 +273,6 @@ const UIOverlay: React.FC = () => {
     }
   };
 
-  // Wait for voices to be ready
-  const waitForVoices = () =>
-    new Promise<void>((resolve) => {
-      const voices = speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        resolve();
-      } else {
-        speechSynthesis.onvoiceschanged = () => {
-          resolve();
-        };
-      }
-    });
-
-  const speakText = async (text: string, voiceName: string) => {
-    if (currentUtterance.current) {
-      speechSynthesis.cancel();
-    }
-
-    await waitForVoices();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    const selectedVoice = speechSynthesis
-      .getVoices()
-      .find((voice) => voice.name === voiceName);
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-    console.log(
-      "VoiceName: " + voiceName + " | Selected voice:" + selectedVoice
-    );
-    currentUtterance.current = utterance;
-    speechSynthesis.speak(utterance);
-  };
-
   const handleResponse = async (data: LLMResponse) => {
     console.log("Handle Response data:", JSON.stringify(data, null, 2));
 
@@ -334,6 +304,8 @@ const UIOverlay: React.FC = () => {
   };
 
   const handleSpeechRecognition = () => {
+    stopTalking();
+
     const recognition = new (window.SpeechRecognition ||
       window.webkitSpeechRecognition)();
     recognition.lang = "en-US";

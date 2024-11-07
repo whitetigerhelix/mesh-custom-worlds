@@ -40,10 +40,12 @@ const useStyles = makeStyles({
   },
   collapsedMessage: {
     maxHeight: "16px",
+    minHeight: "16px",
     overflow: "hidden",
     cursor: "pointer",
     fontSize: "0.6em",
-    ...shorthands.padding("2px"),
+    ...shorthands.padding("0px"),
+    ...shorthands.margin("0px"),
   },
 });
 
