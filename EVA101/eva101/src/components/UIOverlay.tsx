@@ -36,11 +36,14 @@ const useStyles = makeStyles({
     top: "10px",
     left: "10px",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     ...shorthands.padding("10px"),
     backgroundColor: "rgba(92, 92, 92, 0.8)",
     ...shorthands.borderRadius("4px"),
+    width: "400px",
+    maxHeight: "80vh",
+    overflowY: "auto",
   },
   input: {
     marginRight: "10px",
@@ -52,25 +55,52 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius("4px"),
     maxWidth: "600px",
     wordWrap: "break-word",
+    transition: "transform 0.3s ease, opacity 0.3s ease",
+    opacity: 0.7,
+    "&:hover": {
+      transform: "scale(1.05)",
+      opacity: 1,
+    },
   },
   textarea: {
     width: "100%",
     resize: "vertical",
+  },
+  message: {
+    backgroundColor: "#1e1e1e",
+    color: "#ffffff",
+    ...shorthands.padding("10px"),
+    ...shorthands.borderRadius("4px"),
+    marginBottom: "10px",
+    transition: "transform 0.3s ease, opacity 0.3s ease",
+    opacity: 0.7,
+    "&:hover": {
+      transform: "scale(1.05)",
+      opacity: 1,
+    },
+  },
+  userMessage: {
+    alignSelf: "flex-end",
+    backgroundColor: "#0078d4",
+  },
+  assistantMessage: {
+    alignSelf: "flex-start",
+    backgroundColor: "#2d2d2d",
   },
 });
 
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
-  const [assistantResponse, setAssistantResponse] = useState<string | null>(
-    null
-  );
+  const [conversation, setConversation] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([]);
 
   const handleButtonClick = () => {
     console.log("Button clicked with input:", inputValue);
-
-    // Use the fetch API to send a POST request to the local LLM server: http://127.0.0.1:5000/get_completion
+    setConversation((prev) => [...prev, { role: "user", content: inputValue }]);
     sendPostRequest(inputValue);
+    setInputValue("");
   };
 
   const sendPostRequest = async (input: string) => {
@@ -136,7 +166,10 @@ const UIOverlay: React.FC = () => {
           assistantMessageContent
         );
         console.log("Assistant's message:", assistantMessage.textResponse);
-        setAssistantResponse(assistantMessage.textResponse);
+        setConversation((prev) => [
+          ...prev,
+          { role: "assistant", content: assistantMessage.textResponse },
+        ]);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
       }
@@ -154,7 +187,7 @@ const UIOverlay: React.FC = () => {
         htmlFor="inputField"
         style={{ color: "white", marginRight: "10px" }}
       >
-        Present Your Inquiry Adjacent, if You Please
+        Present Your Dissertation Below, if You Please...
       </label>
       <Textarea
         id="inputField"
@@ -167,12 +200,20 @@ const UIOverlay: React.FC = () => {
       <Button onClick={handleButtonClick} aria-label="Print input to console">
         Dispatch Thy Query
       </Button>
-      {assistantResponse && (
-        <div className={styles.responseContainer}>
-          <strong>The Scholarly Aide's Retort:</strong>
-          <p>{assistantResponse}</p>
-        </div>
-      )}
+      <div className={styles.container}>
+        {conversation.map((message, index) => (
+          <div
+            key={index}
+            className={`${styles.message} ${
+              message.role === "user"
+                ? styles.userMessage
+                : styles.assistantMessage
+            }`}
+          >
+            {message.content}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
