@@ -1,14 +1,11 @@
-import {
-  Button,
-  makeStyles,
-  shorthands,
-  Textarea,
-  Select,
-  Checkbox,
-} from "@fluentui/react-components";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { makeStyles, shorthands } from "@fluentui/react-components";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
 import { appLightTheme } from "../EvaTheme";
+import InputSelect from "./InputSelect";
+import VoiceSelector from "./VoiceSelector";
+import ConversationMessages from "./ConversationMessages";
+import useVoices from "../hooks/useVoices";
 
 const useStyles = makeStyles({
   // overlay->container
@@ -49,61 +46,6 @@ const useStyles = makeStyles({
     maxHeight: "80vh",
     overflowY: "auto",
   },
-  input: {
-    marginRight: "10px",
-  },
-  responseContainer: {
-    marginTop: "10px",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    ...shorthands.padding("10px"),
-    ...shorthands.borderRadius("4px"),
-    maxWidth: "600px",
-    wordWrap: "break-word",
-    transition: "transform 0.3s ease, opacity 0.3s ease",
-    opacity: 0.7,
-    "&:hover": {
-      transform: "scale(1.05)",
-      opacity: 1,
-    },
-  },
-  textarea: {
-    width: "100%",
-    resize: "vertical",
-    minHeight: "60px",
-  },
-  message: {
-    backgroundColor: "#1e1e1e",
-    color: "#ffffff",
-    ...shorthands.padding("10px"),
-    ...shorthands.borderRadius("20px"),
-    marginBottom: "10px",
-    transition: "transform 0.3s ease, opacity 0.3s ease, padding 0.3s ease",
-    opacity: 0.7,
-    "&:hover": {
-      transform: "scale(1.05)",
-      opacity: 1,
-    },
-  },
-  userMessage: {
-    alignSelf: "flex-end",
-    backgroundColor: appLightTheme.colorBrandBackground,
-  },
-  assistantMessage: {
-    alignSelf: "flex-start",
-    backgroundColor: appLightTheme.colorNeutralBackground1,
-  },
-  highlightedMessage: {
-    transform: "scale(1.05)",
-    opacity: 1,
-    ...shorthands.padding("15px"), // Increase padding when highlighted
-  },
-  collapsedMessage: {
-    maxHeight: "16px",
-    overflow: "hidden",
-    cursor: "pointer",
-    fontSize: "0.6em", // Reduce font size
-    ...shorthands.padding("2px"), // Reduce padding when collapsed
-  },
 });
 
 const SYSTEM_AGENT_PERSONALITY =
@@ -112,176 +54,18 @@ const AGENT_INITIAL_GREETING =
   "And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?";
 const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'Why, a brisk walk and a touch of laudanum, naturally!'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.`;
 
-const InputSection: React.FC<{
-  inputValue: string;
-  setInputValue: React.Dispatch<React.SetStateAction<string>>;
-  handleButtonClick: () => void;
-  selectedVoice: string;
-  setSelectedVoice: React.Dispatch<React.SetStateAction<string>>;
-  voices: SpeechSynthesisVoice[];
-  isVoiceEnabled: boolean;
-  setIsVoiceEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({
-  inputValue,
-  setInputValue,
-  handleButtonClick,
-  selectedVoice,
-  setSelectedVoice,
-  voices,
-  isVoiceEnabled,
-  setIsVoiceEnabled,
-}) => {
-  const styles = useStyles();
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  return (
-    <>
-      <label
-        htmlFor="inputField"
-        style={{ color: "white", marginRight: "10px" }}
-      >
-        Present Your Dissertation Below, if You Please...
-      </label>
-      <Textarea
-        id="inputField"
-        ref={inputRef}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Kindly inscribe your esteemed query here..."
-        aria-label="Input field for text"
-        className={styles.textarea}
-      />
-      <Select
-        value={selectedVoice}
-        onChange={(_, data) => {
-          console.log("Selected voice changed:", data.value);
-          setSelectedVoice(data.value);
-          localStorage.setItem("selectedVoice", data.value); // Save selected voice to localStorage
-        }}
-        aria-label="Select voice"
-        style={{ marginTop: "10px", width: "400px" }}
-      >
-        {voices.map((voice, index) => (
-          <option key={index} value={voice.name}>
-            {voice.name}
-          </option>
-        ))}
-      </Select>
-      <Checkbox
-        label="Activate the Voice of the Scholarly Aide"
-        checked={isVoiceEnabled}
-        onChange={(_, data) => setIsVoiceEnabled(data.checked as boolean)}
-        style={{ marginTop: "10px" }}
-      />
-      <Button
-        onClick={handleButtonClick}
-        aria-label="Print input to console"
-        style={{ margin: "10px" }}
-      >
-        Dispatch Thy Query
-      </Button>
-    </>
-  );
-};
-
-const ConversationMessages: React.FC<{
-  conversation: { role: "user" | "assistant"; content: string }[];
-}> = ({ conversation = [] }) => {
-  const styles = useStyles();
-
-  return (
-    <div className={styles.container}>
-      {conversation.map((message, index) => (
-        <div
-          key={index}
-          className={`${styles.message} ${
-            message.role === "user"
-              ? styles.userMessage
-              : styles.assistantMessage
-          } ${
-            index === conversation.length - 1 ||
-            index === conversation.length - 2
-              ? styles.highlightedMessage
-              : styles.collapsedMessage
-          }`}
-          onMouseEnter={(e) => {
-            if (index < conversation.length - 2) {
-              const element = e.currentTarget;
-              element.className = `${styles.message} ${
-                message.role === "user"
-                  ? styles.userMessage
-                  : styles.assistantMessage
-              } ${styles.highlightedMessage}`;
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (index < conversation.length - 2) {
-              const element = e.currentTarget;
-              element.className = `${styles.message} ${
-                message.role === "user"
-                  ? styles.userMessage
-                  : styles.assistantMessage
-              } ${styles.collapsedMessage}`;
-            }
-          }}
-        >
-          {message.content}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
-  const [selectedVoice, setSelectedVoice] = useState("");
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const hasInitialized = useRef(false);
   const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
-
-  useEffect(() => {
-    const populateVoices = () => {
-      const availableVoices = speechSynthesis.getVoices();
-      console.log("Available voices:", availableVoices);
-      setVoices(availableVoices);
-      if (availableVoices.length > 0) {
-        const savedVoice = localStorage.getItem("selectedVoice");
-        console.log("Saved voice:", savedVoice);
-        if (savedVoice) {
-          setSelectedVoice(savedVoice);
-        } else {
-          setSelectedVoice(availableVoices[0].name);
-        }
-      }
-    };
-
-    populateVoices();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = populateVoices;
-    }
-
-    setTimeout(async () => {
-      const savedVoice = localStorage.getItem("selectedVoice");
-      console.log(
-        "useEffect UIOverlay - hasInitialized: " +
-          hasInitialized.current +
-          " | isVoiceEnabled: " +
-          isVoiceEnabled +
-          " | savedVoice: " +
-          savedVoice
-      );
-      if (!hasInitialized.current) {
-        await addToConversation("assistant", AGENT_INITIAL_GREETING);
-        hasInitialized.current = true;
-
-        if (isVoiceEnabled) {
-          speakText(AGENT_INITIAL_GREETING, savedVoice || "");
-        }
-      }
-    }, 150);
-  }, [isVoiceEnabled]);
+  const {
+    voices,
+    selectedVoice,
+    setSelectedVoice,
+    isVoiceEnabled,
+    setIsVoiceEnabled,
+  } = useVoices();
 
   // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
   /*
@@ -322,6 +106,28 @@ const UIOverlay: React.FC = () => {
       max_tokens: 150,
     },
   });
+
+  useEffect(() => {
+    setTimeout(async () => {
+      const savedVoice = localStorage.getItem("selectedVoice");
+      console.log(
+        "useEffect UIOverlay - hasInitialized: " +
+          hasInitialized.current +
+          " | isVoiceEnabled: " +
+          isVoiceEnabled +
+          " | savedVoice: " +
+          savedVoice
+      );
+      if (!hasInitialized.current) {
+        await addToConversation("assistant", AGENT_INITIAL_GREETING);
+        hasInitialized.current = true;
+
+        if (isVoiceEnabled) {
+          speakText(AGENT_INITIAL_GREETING, savedVoice || "");
+        }
+      }
+    }, 150);
+  }, [isVoiceEnabled]);
 
   const addToConversation = async (
     role: "user" | "assistant",
@@ -467,10 +273,12 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlayContainer}>
-      <InputSection
+      <InputSelect
         inputValue={inputValue}
         setInputValue={setInputValue}
         handleButtonClick={handleButtonClick}
+      />
+      <VoiceSelector
         selectedVoice={selectedVoice}
         setSelectedVoice={setSelectedVoice}
         voices={voices}
