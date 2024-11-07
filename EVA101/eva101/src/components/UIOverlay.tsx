@@ -75,7 +75,7 @@ const useStyles = makeStyles({
     ...shorthands.padding("10px"),
     ...shorthands.borderRadius("20px"),
     marginBottom: "10px",
-    transition: "transform 0.3s ease, opacity 0.3s ease",
+    transition: "transform 0.3s ease, opacity 0.3s ease, padding 0.3s ease",
     opacity: 0.7,
     "&:hover": {
       transform: "scale(1.05)",
@@ -93,11 +93,14 @@ const useStyles = makeStyles({
   highlightedMessage: {
     transform: "scale(1.05)",
     opacity: 1,
+    ...shorthands.padding("15px"), // Increase padding when highlighted
   },
   collapsedMessage: {
-    maxHeight: "20px",
+    maxHeight: "16px",
     overflow: "hidden",
     cursor: "pointer",
+    fontSize: "0.6em", // Reduce font size
+    ...shorthands.padding("2px"), // Reduce padding when collapsed
   },
 });
 
@@ -158,26 +161,24 @@ const ConversationMessages: React.FC<{
               : styles.collapsedMessage
           }`}
           onMouseEnter={(e) => {
-            const element = e.currentTarget;
-            element.className.split(" ").forEach((className) => {
-              if (className === styles.collapsedMessage) {
-                element.classList.remove(className);
-              }
-              if (className === styles.highlightedMessage) {
-                element.classList.add(className);
-              }
-            });
+            if (index < conversation.length - 2) {
+              const element = e.currentTarget;
+              element.className = `${styles.message} ${
+                message.role === "user"
+                  ? styles.userMessage
+                  : styles.assistantMessage
+              } ${styles.highlightedMessage}`;
+            }
           }}
           onMouseLeave={(e) => {
-            const element = e.currentTarget;
-            element.className.split(" ").forEach((className) => {
-              if (className === styles.highlightedMessage) {
-                element.classList.remove(className);
-              }
-              if (className === styles.collapsedMessage) {
-                element.classList.add(className);
-              }
-            });
+            if (index < conversation.length - 2) {
+              const element = e.currentTarget;
+              element.className = `${styles.message} ${
+                message.role === "user"
+                  ? styles.userMessage
+                  : styles.assistantMessage
+              } ${styles.collapsedMessage}`;
+            }
           }}
         >
           {message.content}
