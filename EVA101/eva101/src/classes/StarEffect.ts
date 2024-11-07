@@ -20,6 +20,9 @@ export class StarEffect {
   public sound!: Sound;
   private audioContext: AudioContext;
   private oscillator!: OscillatorNode;
+  private oscillator2!: OscillatorNode;
+  private lfo!: OscillatorNode;
+  private lfoGain!: GainNode;
   private scene: Scene;
   private shadowGenerator: ShadowGenerator;
 
@@ -114,6 +117,7 @@ export class StarEffect {
   }
 
   public createStarAudio() {
+    // Create the main oscillator
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = "triangle"; // ie: 'square', 'sawtooth', 'triangle', 'sine'
     this.oscillator.frequency.setValueAtTime(
@@ -121,14 +125,37 @@ export class StarEffect {
       this.audioContext.currentTime
     );
 
+    // Create a second oscillator for overtones
+    this.oscillator2 = this.audioContext.createOscillator();
+    this.oscillator2.type = "sine";
+    this.oscillator2.frequency.setValueAtTime(
+      this.BASE_TONE_FREQUENCY * 2,
+      this.audioContext.currentTime
+    );
+
+    const volume = 0.5; // Set lower volume for a more subtle effect
+
     // Create a GainNode for volume control and a media stream for the gain audio
     const mediaStreamDestination =
       this.audioContext.createMediaStreamDestination();
     const gainNode = this.audioContext.createGain();
-    gainNode.gain.setValueAtTime(1, this.audioContext.currentTime); // Set initial volume
+    gainNode.gain.setValueAtTime(1, this.audioContext.currentTime);
 
-    // Connect the oscillator to the GainNode, then gain to the MediaStreamAudioDestinationNode
+    // Create an LFO for amplitude modulation
+    this.lfo = this.audioContext.createOscillator();
+    this.lfo.type = "sine";
+    this.lfo.frequency.setValueAtTime(volume, this.audioContext.currentTime); // LFO frequency
+
+    this.lfoGain = this.audioContext.createGain();
+    this.lfoGain.gain.setValueAtTime(volume, this.audioContext.currentTime); // LFO amplitude
+
+    // Connect the LFO to the gain node
+    this.lfo.connect(this.lfoGain);
+    this.lfoGain.connect(gainNode.gain);
+
+    // Connect the oscillators to the GainNode, then gain to the MediaStreamAudioDestinationNode
     this.oscillator.connect(gainNode);
+    this.oscillator2.connect(gainNode);
     gainNode.connect(mediaStreamDestination);
 
     // Create the Sound instance using the media stream
@@ -141,7 +168,7 @@ export class StarEffect {
         autoplay: false,
         loop: true,
         spatialSound: true,
-        volume: 0.5, // Set lower volume for a more subtle effect
+        volume: volume,
         distanceModel: "exponential",
         rolloffFactor: 1.5,
       }
@@ -156,6 +183,8 @@ export class StarEffect {
     }
     this.sound.onended = () => {
       this.oscillator.stop();
+      this.oscillator2.stop();
+      this.lfo.stop();
     };
   }
 
@@ -174,11 +203,15 @@ export class StarEffect {
   public startAudio() {
     this.sound.play();
     this.oscillator.start();
+    this.oscillator2.start();
+    this.lfo.start();
   }
 
   public stopAudio() {
     this.sound.stop();
     this.oscillator.stop();
+    this.oscillator2.stop();
+    this.lfo.stop();
   }
 
   public update() {
@@ -220,6 +253,10 @@ export class StarEffect {
       frequency,
       this.audioContext.currentTime
     );
+    this.oscillator2.frequency.setValueAtTime(
+      frequency * 2,
+      this.audioContext.currentTime
+    ); // Harmonic overtone
   }
 
   // Cleanup
