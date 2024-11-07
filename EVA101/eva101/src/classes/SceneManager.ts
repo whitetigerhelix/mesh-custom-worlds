@@ -122,11 +122,11 @@ export class SceneManager {
     button.color = "white";
     button.background = "black";
     button.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
-    button.verticalAlignment = Button.VERTICAL_ALIGNMENT_TOP;
-    button.top = "75px"; // Adjust as needed
-    button.left = "10px"; // Adjust as needed
+    button.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
     button.width = "160px";
     button.height = "40px";
+    button.top = -parseFloat(button.height) + 10 + "px";
+    button.left = "10px";
     button.onPointerUpObservable.add(() => {
       this.starEffect.toggleAudio();
     });
