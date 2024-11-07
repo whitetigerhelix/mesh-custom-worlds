@@ -30,6 +30,8 @@ export class StarEffect {
 
   ORBIT_DISTANCE = 3;
   ORBIT_SPEED = 0.001;
+  ORBIT_ELLIPSE_FACTOR = 2.5; // Elliptical factor, 1 for circular, >1 for elliptical
+  ORBIT_ELLIPTICAL_DEVIATION = 0.00001; // Deviation off the ecliptic plane
   LIGHT_INTENSITY = 1.0;
   COLOR_TIME = 0.0025;
   BASE_TONE_FREQUENCY = 96;
@@ -217,8 +219,11 @@ export class StarEffect {
   public update() {
     // Orbit the light around the planet
     const time = Date.now() * this.ORBIT_SPEED;
-    this.pointLight.position.x = Math.sin(time) * this.ORBIT_DISTANCE;
-    this.pointLight.position.y = this.mesh.position.y;
+    this.pointLight.position.x =
+      Math.sin(time) * this.ORBIT_DISTANCE * this.ORBIT_ELLIPSE_FACTOR;
+    this.pointLight.position.y =
+      this.mesh.position.y +
+      Math.sin(time * 0.5) * this.ORBIT_ELLIPTICAL_DEVIATION;
     this.pointLight.position.z = Math.cos(time) * this.ORBIT_DISTANCE;
 
     // Animate the color using Perlin noise
