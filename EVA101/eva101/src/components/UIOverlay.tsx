@@ -120,19 +120,26 @@ const UIOverlay: React.FC = () => {
   useEffect(() => {
     const initialize = async () => {
       const savedVoice = localStorage.getItem("selectedVoice");
+      const savedIsVoiceEnabled = JSON.parse(
+        localStorage.getItem("isVoiceEnabled") || "false"
+      );
       console.log(
         "useEffect UIOverlay - hasInitialized: " +
           hasInitialized.current +
           " | isVoiceEnabled: " +
           isVoiceEnabled +
           " | savedVoice: " +
-          savedVoice
+          savedVoice +
+          " | savedIsVoiceEnabled: " +
+          savedIsVoiceEnabled
       );
       if (!hasInitialized.current) {
         await addToConversation("assistant", AGENT_INITIAL_GREETING);
         hasInitialized.current = true;
 
-        if (isVoiceEnabled) {
+        setIsVoiceEnabled(savedIsVoiceEnabled);
+
+        if (savedIsVoiceEnabled) {
           speakText(AGENT_INITIAL_GREETING, savedVoice || "");
         }
       }

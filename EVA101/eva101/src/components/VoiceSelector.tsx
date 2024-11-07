@@ -37,7 +37,10 @@ const VoiceSelector: React.FC<VoiceSelectorProps> = ({
       <Checkbox
         label="Activate the Voice of the Scholarly Aide"
         checked={isVoiceEnabled}
-        onChange={(_, data) => setIsVoiceEnabled(data.checked as boolean)}
+        onChange={(_, data) => {
+          setIsVoiceEnabled(data.checked as boolean);
+          localStorage.setItem("isVoiceEnabled", JSON.stringify(data.checked)); // Save isVoiceEnabled to localStorage
+        }}
         style={{ marginTop: "10px" }}
       />
     </>
