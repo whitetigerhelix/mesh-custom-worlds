@@ -148,7 +148,7 @@ const InputSection: React.FC<{
 
 const ConversationMessages: React.FC<{
   conversation: { role: "user" | "assistant"; content: string }[];
-}> = ({ conversation }) => {
+}> = ({ conversation = [] }) => {
   const styles = useStyles();
 
   return (
@@ -197,11 +197,9 @@ const ConversationMessages: React.FC<{
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
+  const hasInitialized = useRef(false);
 
-  const initialChatHistory: {
-    role: "user" | "assistant" | "system";
-    content: string;
-  }[] = [{ role: "system", content: SYSTEM_AGENT_PROMPT }];
+  // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
   /*
   const sampleChatHistory = [
     { role: "system", content: SYSTEM_AGENT_PROMPT },
@@ -220,11 +218,18 @@ const UIOverlay: React.FC = () => {
     { role: "user", content: "Yes, I have." },
   ];
 */
+  // System level setting prompt for the agent
+  const initialChatHistory: {
+    role: "user" | "assistant" | "system";
+    content: string;
+  }[] = [{ role: "system", content: SYSTEM_AGENT_PROMPT }];
+
+  // Conversation is used to manage the converation history displayed in the UI
   const [conversation, setConversation] = useState<
     { role: "user" | "assistant"; content: string }[]
   >([]);
 
-  const [requestBody, setRequestBody] = useState<RequestBody>({
+  const [requestBody /*setRequestBody*/] = useState<RequestBody>({
     chat_history: initialChatHistory,
     llm_params: {
       model: "dev-gpt-35-1106-chat-completions",
@@ -234,31 +239,81 @@ const UIOverlay: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    addToChatHistory("assistant", AGENT_INITIAL_GREETING);
-    setConversation([{ role: "assistant", content: AGENT_INITIAL_GREETING }]);
-  }, []);
+  const addToConversation = async (
+    role: "user" | "assistant",
+    content: string
+  ) => {
+    console.log(
+      "Adding to conversation - role: " + role + " | content: " + content
+    );
 
-  const addToChatHistory = (role: "user" | "assistant", content: string) => {
-    setRequestBody((prev) => ({
-      ...prev,
-      chat_history: [...prev.chat_history, { role, content }],
-    }));
+    // Add the new message to the conversation
+    return new Promise<void>((resolve) => {
+      setConversation((prev) => {
+        const updatedConversation = [...prev, { role, content }];
+        console.log(
+          "Updated Conversation:",
+          JSON.stringify(updatedConversation, null, 2)
+        );
+        console.log(
+          "Updated Request body:",
+          JSON.stringify(
+            updateRequestBody(requestBody, updatedConversation),
+            null,
+            2
+          )
+        );
+        resolve();
+        return updatedConversation;
+      });
+    });
   };
 
+  const updateRequestBody = (
+    initialRequestBody: RequestBody,
+    conversation: { role: "user" | "assistant"; content: string }[]
+  ): RequestBody => {
+    const updatedChatHistory = [
+      ...initialRequestBody.chat_history,
+      ...conversation,
+    ];
+    return { ...initialRequestBody, chat_history: updatedChatHistory };
+  };
+
+  useEffect(() => {
+    setTimeout(async () => {
+      console.log(
+        "useEffect UIOverlay - hasInitialized: " + hasInitialized.current
+      );
+      if (!hasInitialized.current) {
+        await addToConversation("assistant", AGENT_INITIAL_GREETING);
+        hasInitialized.current = true;
+      }
+    }, 150);
+  }, []);
+
   const handleButtonClick = () => {
-    console.log("Button clicked with input:", inputValue);
-    setConversation((prev) => [...prev, { role: "user", content: inputValue }]);
-    addToChatHistory("user", inputValue);
-    sendPostRequest();
+    console.log("User asks assistant the following: ", inputValue);
+
+    addToConversation("user", inputValue).then(() => {
+      sendPostRequest();
+    });
+
+    // Clear the input field for next query
     setInputValue("");
   };
 
   const sendPostRequest = async () => {
     try {
-      const requestBodyString = JSON.stringify(requestBody);
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+      // Get the current request body as a string
+      const currentRequestBody = updateRequestBody(requestBody, conversation);
+      const requestBodyString = JSON.stringify(currentRequestBody);
+      console.log(
+        "Sending Post with Request body:",
+        JSON.stringify(currentRequestBody, null, 2)
+      );
 
+      // Send the request and wait for the response
       const response = await fetch("http://127.0.0.1:5000/get_completion", {
         method: "POST",
         headers: {
@@ -267,7 +322,7 @@ const UIOverlay: React.FC = () => {
         body: requestBodyString,
       });
 
-      // Get response
+      // Get LLM response data
       const data: LLMResponse = await response.json();
       handleResponse(data);
     } catch (error) {
@@ -275,20 +330,22 @@ const UIOverlay: React.FC = () => {
     }
   };
 
-  const handleResponse = (data: LLMResponse) => {
-    console.log("Response data:", data);
+  const handleResponse = async (data: LLMResponse) => {
+    console.log("Response data:", JSON.stringify(data, null, 2));
+
     if (data.response.choices && data.response.choices.length > 0) {
       const assistantMessageContent = data.response.choices[0].message.content;
       try {
         const assistantMessage: AssistantMessage = JSON.parse(
           assistantMessageContent
         );
-        console.log("Assistant's message:", assistantMessage.textResponse);
-        setConversation((prev) => [
-          ...prev,
-          { role: "assistant", content: assistantMessage.textResponse },
-        ]);
-        addToChatHistory("assistant", assistantMessage.textResponse);
+
+        /*console.log(
+          "Assistant's response message:",
+          assistantMessage.textResponse
+        );*/
+
+        await addToConversation("assistant", assistantMessage.textResponse);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
       }
@@ -307,7 +364,7 @@ const UIOverlay: React.FC = () => {
         setInputValue={setInputValue}
         handleButtonClick={handleButtonClick}
       />
-      <ConversationMessages conversation={conversation} />
+      <ConversationMessages conversation={conversation || []} />
     </div>
   );
 };
