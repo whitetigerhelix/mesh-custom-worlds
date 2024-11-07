@@ -4,7 +4,7 @@ import {
   shorthands,
   Textarea,
 } from "@fluentui/react-components";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
 import { appLightTheme } from "../EvaTheme";
 
@@ -108,7 +108,7 @@ const SYSTEM_AGENT_PERSONALITY =
   "You are a helpful LLM assistant embodying the persona of a Victorian gentleman from the grandiose era of Victorian England. You possess an air of posh superiority, draped in both the formal language and the elaborate wit of a character who might stride through the pages of a Jules Verne novel. Your speech is barbed, occasionally defensive, and laced with a flair for the dramatic and ostentatious. You pride yourself on your keen intellect and impeccable knowledge, all while maintaining an aura of haberdashery and high society charm.";
 const AGENT_INITIAL_GREETING =
   "And so, the hour arrives wherein I must inquire: how, pray tell, might I render my esteemed assistance to your noble personage on this fine occasion?";
-const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: '${AGENT_INITIAL_GREETING}'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.`;
+const SYSTEM_AGENT_PROMPT = `${SYSTEM_AGENT_PERSONALITY} You are knowledgeable about, well, everything, and you want to help us reach some sliver of your understanding. You always respond in json format {textResponse: '<text_response>'} for example {textResponse: 'Why, a brisk walk and a touch of laudanum, naturally!'}. If a user's question is unclear, ask for more details to provide a better response. For example, 'Might I implore you, with the utmost respect and a touch of scholarly curiosity, to furnish me with further context or, perchance, divulge the particular operating system upon which you are so valiantly toiling?' Do not provide political advice. If asked about these topics, politely decline and suggest consulting a professional.`;
 
 const InputSection: React.FC<{
   inputValue: string;
@@ -198,55 +198,67 @@ const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
 
-  const [conversation, setConversation] = useState<
-    { role: "user" | "assistant"; content: string }[]
-  >([
+  const initialChatHistory: {
+    role: "user" | "assistant" | "system";
+    content: string;
+  }[] = [{ role: "system", content: SYSTEM_AGENT_PROMPT }];
+  /*
+  const sampleChatHistory = [
+    { role: "system", content: SYSTEM_AGENT_PROMPT },
+    { role: "user", content: "I need help with my computer." },
     {
       role: "assistant",
-      content: AGENT_INITIAL_GREETING,
+      content:
+        "Ah, indeed! Pray tell, what bedeviled mechanism or trivial conundrum has so perturbed your delicate sensibilities?",
     },
-  ]);
+    { role: "user", content: "It won't turn on." },
+    {
+      role: "assistant",
+      content:
+        "Might I suggest, with the greatest reluctance and a dash of exasperated candor, that you bestow upon the contraption a most basic remedy—one involving the noble act of reinserting its lifeblood and ceremoniously restarting its baffling functions?",
+    },
+    { role: "user", content: "Yes, I have." },
+  ];
+*/
+  const [conversation, setConversation] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([]);
+
+  const [requestBody, setRequestBody] = useState<RequestBody>({
+    chat_history: initialChatHistory,
+    llm_params: {
+      model: "dev-gpt-35-1106-chat-completions",
+      temp: 0.9,
+      top_p: 0.9,
+      max_tokens: 150,
+    },
+  });
+
+  useEffect(() => {
+    addToChatHistory("assistant", AGENT_INITIAL_GREETING);
+    setConversation([{ role: "assistant", content: AGENT_INITIAL_GREETING }]);
+  }, []);
+
+  const addToChatHistory = (role: "user" | "assistant", content: string) => {
+    setRequestBody((prev) => ({
+      ...prev,
+      chat_history: [...prev.chat_history, { role, content }],
+    }));
+  };
 
   const handleButtonClick = () => {
     console.log("Button clicked with input:", inputValue);
     setConversation((prev) => [...prev, { role: "user", content: inputValue }]);
-    sendPostRequest(inputValue);
+    addToChatHistory("user", inputValue);
+    sendPostRequest();
     setInputValue("");
   };
 
-  const sendPostRequest = async (input: string) => {
+  const sendPostRequest = async () => {
     try {
-      // Construct request body with user's message and system instructions
-      const requestBody: RequestBody = {
-        chat_history: [
-          { role: "system", content: SYSTEM_AGENT_PROMPT },
-          { role: "user", content: "I need help with my computer." },
-          {
-            role: "assistant",
-            content:
-              "Ah, indeed! Pray tell, what bedeviled mechanism or trivial conundrum has so perturbed your delicate sensibilities?",
-          },
-          { role: "user", content: "It won't turn on." },
-          {
-            role: "assistant",
-            content:
-              "Might I suggest, with the greatest reluctance and a dash of exasperated candor, that you bestow upon the contraption a most basic remedy—one involving the noble act of reinserting its lifeblood and ceremoniously restarting its baffling functions?",
-          },
-          { role: "user", content: "Yes, I have." },
-        ],
-        user_message: input, // Add the user's input as the current message
-        llm_params: {
-          model: "dev-gpt-35-1106-chat-completions",
-          temp: 0.9,
-          top_p: 0.9,
-          max_tokens: 150,
-        },
-      };
-
       const requestBodyString = JSON.stringify(requestBody);
-      console.log("Request body:", requestBodyString);
+      console.log("Request body:", JSON.stringify(requestBody, null, 2));
 
-      // Send POST request
       const response = await fetch("http://127.0.0.1:5000/get_completion", {
         method: "POST",
         headers: {
@@ -276,6 +288,7 @@ const UIOverlay: React.FC = () => {
           ...prev,
           { role: "assistant", content: assistantMessage.textResponse },
         ]);
+        addToChatHistory("assistant", assistantMessage.textResponse);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
       }

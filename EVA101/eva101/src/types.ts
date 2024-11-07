@@ -12,7 +12,6 @@ export interface LLMParams {
 
 export interface RequestBody {
   chat_history: ChatMessage[];
-  user_message: string;
   llm_params: LLMParams;
 }
 
