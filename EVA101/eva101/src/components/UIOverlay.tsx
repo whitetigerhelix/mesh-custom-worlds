@@ -3,6 +3,7 @@ import {
   makeStyles,
   shorthands,
   Textarea,
+  Select,
 } from "@fluentui/react-components";
 import { useState, useRef, useEffect } from "react";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
@@ -114,7 +115,17 @@ const InputSection: React.FC<{
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   handleButtonClick: () => void;
-}> = ({ inputValue, setInputValue, handleButtonClick }) => {
+  selectedVoice: string;
+  setSelectedVoice: React.Dispatch<React.SetStateAction<string>>;
+  voices: SpeechSynthesisVoice[];
+}> = ({
+  inputValue,
+  setInputValue,
+  handleButtonClick,
+  selectedVoice,
+  setSelectedVoice,
+  voices,
+}) => {
   const styles = useStyles();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -135,6 +146,18 @@ const InputSection: React.FC<{
         aria-label="Input field for text"
         className={styles.textarea}
       />
+      <Select
+        value={selectedVoice}
+        onChange={(_, data) => setSelectedVoice(data.value)}
+        aria-label="Select voice"
+        style={{ marginTop: "10px", width: "400px" }}
+      >
+        {voices.map((voice, index) => (
+          <option key={index} value={voice.name}>
+            {voice.name}
+          </option>
+        ))}
+      </Select>
       <Button
         onClick={handleButtonClick}
         aria-label="Print input to console"
@@ -197,7 +220,37 @@ const ConversationMessages: React.FC<{
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
+  const [selectedVoice, setSelectedVoice] = useState("");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const hasInitialized = useRef(false);
+
+  useEffect(() => {
+    const populateVoices = () => {
+      const availableVoices = speechSynthesis.getVoices();
+      console.log("Available voices:", availableVoices);
+      setVoices(availableVoices);
+      if (availableVoices.length > 0) {
+        setSelectedVoice(availableVoices[0].name);
+      }
+    };
+
+    populateVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoices;
+    }
+
+    setTimeout(async () => {
+      console.log(
+        "useEffect UIOverlay - hasInitialized: " + hasInitialized.current
+      );
+      if (!hasInitialized.current) {
+        await addToConversation("assistant", AGENT_INITIAL_GREETING);
+        hasInitialized.current = true;
+
+        speakText(AGENT_INITIAL_GREETING, selectedVoice);
+      }
+    }, 150);
+  }, []);
 
   // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
   /*
@@ -251,18 +304,8 @@ const UIOverlay: React.FC = () => {
     return new Promise<void>((resolve) => {
       setConversation((prev) => {
         const updatedConversation = [...prev, { role, content }];
-        console.log(
-          "Updated Conversation:",
-          JSON.stringify(updatedConversation, null, 2)
-        );
-        console.log(
-          "Updated Request body:",
-          JSON.stringify(
-            updateRequestBody(requestBody, updatedConversation),
-            null,
-            2
-          )
-        );
+        //console.log("Updated Conversation:",JSON.stringify(updatedConversation, null, 2));
+        //console.log("Updated Request body:", JSON.stringify(updateRequestBody(requestBody, updatedConversation), null, 2));
         resolve();
         return updatedConversation;
       });
@@ -279,18 +322,6 @@ const UIOverlay: React.FC = () => {
     ];
     return { ...initialRequestBody, chat_history: updatedChatHistory };
   };
-
-  useEffect(() => {
-    setTimeout(async () => {
-      console.log(
-        "useEffect UIOverlay - hasInitialized: " + hasInitialized.current
-      );
-      if (!hasInitialized.current) {
-        await addToConversation("assistant", AGENT_INITIAL_GREETING);
-        hasInitialized.current = true;
-      }
-    }, 150);
-  }, []);
 
   const handleButtonClick = () => {
     console.log("User asks assistant the following: ", inputValue);
@@ -330,8 +361,19 @@ const UIOverlay: React.FC = () => {
     }
   };
 
+  const speakText = (text: string, voiceName: string) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const selectedVoice = speechSynthesis
+      .getVoices()
+      .find((voice) => voice.name === voiceName);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    speechSynthesis.speak(utterance);
+  };
+
   const handleResponse = async (data: LLMResponse) => {
-    console.log("Response data:", JSON.stringify(data, null, 2));
+    console.log("Handle Response data:", JSON.stringify(data, null, 2));
 
     if (data.response.choices && data.response.choices.length > 0) {
       const assistantMessageContent = data.response.choices[0].message.content;
@@ -340,11 +382,12 @@ const UIOverlay: React.FC = () => {
           assistantMessageContent
         );
 
-        /*console.log(
+        console.log(
           "Assistant's response message:",
           assistantMessage.textResponse
-        );*/
+        );
 
+        speakText(assistantMessage.textResponse, selectedVoice);
         await addToConversation("assistant", assistantMessage.textResponse);
       } catch (error) {
         console.error("Error parsing assistant message:", error);
@@ -363,6 +406,9 @@ const UIOverlay: React.FC = () => {
         inputValue={inputValue}
         setInputValue={setInputValue}
         handleButtonClick={handleButtonClick}
+        selectedVoice={selectedVoice}
+        setSelectedVoice={setSelectedVoice}
+        voices={voices}
       />
       <ConversationMessages conversation={conversation || []} />
     </div>
