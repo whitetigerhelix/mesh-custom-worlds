@@ -1,12 +1,12 @@
 import {
   Button,
-  Input,
   makeStyles,
   shorthands,
   Textarea,
 } from "@fluentui/react-components";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { RequestBody, LLMResponse, AssistantMessage } from "../types";
+import { appLightTheme } from "../EvaTheme";
 
 const useStyles = makeStyles({
   // overlay->container
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     ...shorthands.padding("20px"),
   },
   container: {
-    backgroundColor: "gray",
+    backgroundColor: appLightTheme.colorNeutralBackground1,
     ...shorthands.padding("20px"),
     ...shorthands.borderRadius("8px"),
     display: "flex",
@@ -65,12 +65,13 @@ const useStyles = makeStyles({
   textarea: {
     width: "100%",
     resize: "vertical",
+    minHeight: "60px",
   },
   message: {
     backgroundColor: "#1e1e1e",
     color: "#ffffff",
     ...shorthands.padding("10px"),
-    ...shorthands.borderRadius("4px"),
+    ...shorthands.borderRadius("20px"),
     marginBottom: "10px",
     transition: "transform 0.3s ease, opacity 0.3s ease",
     opacity: 0.7,
@@ -81,13 +82,108 @@ const useStyles = makeStyles({
   },
   userMessage: {
     alignSelf: "flex-end",
-    backgroundColor: "#0078d4",
+    backgroundColor: appLightTheme.colorBrandBackground,
   },
   assistantMessage: {
     alignSelf: "flex-start",
-    backgroundColor: "#2d2d2d",
+    backgroundColor: appLightTheme.colorNeutralBackground1,
+  },
+  highlightedMessage: {
+    transform: "scale(1.05)",
+    opacity: 1,
+  },
+  collapsedMessage: {
+    maxHeight: "20px",
+    overflow: "hidden",
+    cursor: "pointer",
   },
 });
+
+const InputSection: React.FC<{
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  handleButtonClick: () => void;
+}> = ({ inputValue, setInputValue, handleButtonClick }) => {
+  const styles = useStyles();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  return (
+    <>
+      <label
+        htmlFor="inputField"
+        style={{ color: "white", marginRight: "10px" }}
+      >
+        Present Your Dissertation Below, if You Please...
+      </label>
+      <Textarea
+        id="inputField"
+        ref={inputRef}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Kindly inscribe your esteemed query here..."
+        aria-label="Input field for text"
+        className={styles.textarea}
+      />
+      <Button
+        onClick={handleButtonClick}
+        aria-label="Print input to console"
+        style={{ margin: "10px" }}
+      >
+        Dispatch Thy Query
+      </Button>
+    </>
+  );
+};
+
+const ConversationMessages: React.FC<{
+  conversation: { role: "user" | "assistant"; content: string }[];
+}> = ({ conversation }) => {
+  const styles = useStyles();
+
+  return (
+    <div className={styles.container}>
+      {conversation.map((message, index) => (
+        <div
+          key={index}
+          className={`${styles.message} ${
+            message.role === "user"
+              ? styles.userMessage
+              : styles.assistantMessage
+          } ${
+            index === conversation.length - 1 ||
+            index === conversation.length - 2
+              ? styles.highlightedMessage
+              : styles.collapsedMessage
+          }`}
+          onMouseEnter={(e) => {
+            const element = e.currentTarget;
+            element.className.split(" ").forEach((className) => {
+              if (className === styles.collapsedMessage) {
+                element.classList.remove(className);
+              }
+              if (className === styles.highlightedMessage) {
+                element.classList.add(className);
+              }
+            });
+          }}
+          onMouseLeave={(e) => {
+            const element = e.currentTarget;
+            element.className.split(" ").forEach((className) => {
+              if (className === styles.highlightedMessage) {
+                element.classList.remove(className);
+              }
+              if (className === styles.collapsedMessage) {
+                element.classList.add(className);
+              }
+            });
+          }}
+        >
+          {message.content}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const UIOverlay: React.FC = () => {
   const styles = useStyles();
@@ -183,37 +279,12 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlayContainer}>
-      <label
-        htmlFor="inputField"
-        style={{ color: "white", marginRight: "10px" }}
-      >
-        Present Your Dissertation Below, if You Please...
-      </label>
-      <Textarea
-        id="inputField"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Kindly inscribe your esteemed query here..."
-        aria-label="Input field for text"
-        className={styles.textarea}
+      <InputSection
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        handleButtonClick={handleButtonClick}
       />
-      <Button onClick={handleButtonClick} aria-label="Print input to console">
-        Dispatch Thy Query
-      </Button>
-      <div className={styles.container}>
-        {conversation.map((message, index) => (
-          <div
-            key={index}
-            className={`${styles.message} ${
-              message.role === "user"
-                ? styles.userMessage
-                : styles.assistantMessage
-            }`}
-          >
-            {message.content}
-          </div>
-        ))}
-      </div>
+      <ConversationMessages conversation={conversation} />
     </div>
   );
 };
