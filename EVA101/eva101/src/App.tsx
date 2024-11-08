@@ -5,7 +5,9 @@ import { makeStyles } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
   appContainer: {
-    position: "relative",
+    position: "fixed",
+    top: 0,
+    left: 0,
     width: "100vw",
     height: "100vh",
   },
@@ -27,10 +29,10 @@ const App: React.FC = () => {
     };
   }, []);
 
-  //TODO: change to <SceneManager /> -- SceneManager, and the planet and the star effect all need to be refactored to React components (and put in components folder), and fix casing for file names
+  //TODO: change to <SceneManager /> -- SceneManager, and the planet and the star effect all need to be refactored to React components (and put in components folder), and fix casing for file names, then we can move this stuff in there
   return (
     <div className={styles.appContainer}>
-      <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} />
+      <canvas ref={canvasRef} />
       <UIOverlay />
     </div>
   );

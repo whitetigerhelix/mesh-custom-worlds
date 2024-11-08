@@ -105,6 +105,7 @@ const UIOverlay: React.FC = () => {
     setIsVoiceEnabled,
     speakText,
     stopTalking,
+    isSpeaking,
   } = useVoices();
 
   // Chat history is part of the request body and is used to keep track of the entire conversation history sent to the LLM
@@ -388,6 +389,11 @@ const UIOverlay: React.FC = () => {
             voices={voices}
             isVoiceEnabled={isVoiceEnabled}
             setIsVoiceEnabled={setIsVoiceEnabled}
+          />
+          <VoiceReactiveMesh
+            isSpeaking={isSpeaking}
+            speakText={speakText}
+            stopTalking={stopTalking}
           />
           <div className={styles.conversationContainer}>
             <ConversationMessages conversation={conversation || []} />

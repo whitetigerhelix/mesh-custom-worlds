@@ -8,7 +8,7 @@ const useStyles = makeStyles({
     ...shorthands.padding("20px"),
     ...shorthands.borderRadius("8px"),
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column-reverse", // Change to column-reverse for reversed order
     gap: "10px",
     maxHeight: "50vh",
     overflowY: "auto",
@@ -65,43 +65,45 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
 
   return (
     <div className={styles.container}>
-      {conversation.map((message, index) => (
-        <div
-          key={index}
-          className={`${styles.message} ${
-            message.role === "user"
-              ? styles.userMessage
-              : styles.assistantMessage
-          } ${
-            index === conversation.length - 1 ||
-            index === conversation.length - 2
-              ? styles.highlightedMessage
-              : styles.collapsedMessage
-          }`}
-          onMouseEnter={(e) => {
-            if (index < conversation.length - 2) {
-              const element = e.currentTarget;
-              element.className = `${styles.message} ${
-                message.role === "user"
-                  ? styles.userMessage
-                  : styles.assistantMessage
-              } ${styles.highlightedMessage}`;
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (index < conversation.length - 2) {
-              const element = e.currentTarget;
-              element.className = `${styles.message} ${
-                message.role === "user"
-                  ? styles.userMessage
-                  : styles.assistantMessage
-              } ${styles.collapsedMessage}`;
-            }
-          }}
-        >
-          {message.content}
-        </div>
-      ))}
+      {conversation
+        .slice()
+        .reverse()
+        .map((message, index) => (
+          <div
+            key={index}
+            className={`${styles.message} ${
+              message.role === "user"
+                ? styles.userMessage
+                : styles.assistantMessage
+            } ${
+              index === 0 || index === 1
+                ? styles.highlightedMessage
+                : styles.collapsedMessage
+            }`}
+            onMouseEnter={(e) => {
+              if (index > 1) {
+                const element = e.currentTarget;
+                element.className = `${styles.message} ${
+                  message.role === "user"
+                    ? styles.userMessage
+                    : styles.assistantMessage
+                } ${styles.highlightedMessage}`;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (index > 1) {
+                const element = e.currentTarget;
+                element.className = `${styles.message} ${
+                  message.role === "user"
+                    ? styles.userMessage
+                    : styles.assistantMessage
+                } ${styles.collapsedMessage}`;
+              }
+            }}
+          >
+            {message.content}
+          </div>
+        ))}
     </div>
   );
 };
