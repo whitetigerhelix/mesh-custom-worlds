@@ -2,7 +2,11 @@ import { RequestBody, LLMResponse, AssistantMessage } from "../types";
 import { updateRequestBody } from "./agent";
 
 export const sendPostRequest = async (
-  updatedConvo: { role: "user" | "assistant"; content: string }[],
+  updatedConvo: {
+    role: "user" | "assistant";
+    content: string;
+    mood: string;
+  }[],
   requestBody: RequestBody,
   speakText: (text: string, voiceName: string, mood: string) => void,
   selectedVoice: string,
@@ -11,7 +15,7 @@ export const sendPostRequest = async (
     role: "user" | "assistant",
     content: string,
     mood: string
-  ) => Promise<{ role: "user" | "assistant"; content: string }[]>
+  ) => Promise<{ role: "user" | "assistant"; content: string; mood: string }[]>
 ) => {
   try {
     // Get the current request body as a string
@@ -64,12 +68,13 @@ const handleResponse = async (
     role: "user" | "assistant",
     content: string,
     mood: string
-  ) => Promise<{ role: "user" | "assistant"; content: string }[]>
+  ) => Promise<{ role: "user" | "assistant"; content: string; mood: string }[]>
 ) => {
   console.log("Handle Response data:", JSON.stringify(data, null, 2));
 
   if (data.response.choices && data.response.choices.length > 0) {
     const assistantMessageContent = data.response.choices[0].message.content;
+    const assistantMood = data.response.choices[0].message.mood;
     try {
       const assistantMessage: AssistantMessage = JSON.parse(
         assistantMessageContent
@@ -79,9 +84,6 @@ const handleResponse = async (
         "Assistant's response message:",
         assistantMessage.textResponse
       );
-
-      //TODO: This should come from the response itself
-      const assistantMood = assistantMessage.mood || "neutral"; // Assuming the mood is part of the response
 
       if (isVoiceEnabled) {
         speakText(assistantMessage.textResponse, selectedVoice, assistantMood);

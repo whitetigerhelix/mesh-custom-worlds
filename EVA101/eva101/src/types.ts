@@ -24,6 +24,7 @@ export interface LLMResponse {
     choices: {
       message: {
         content: string;
+        mood: string;
       };
     }[];
   };
