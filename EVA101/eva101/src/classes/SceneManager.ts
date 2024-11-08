@@ -114,23 +114,42 @@ export class SceneManager {
 
     // Set up some simple UI
     //TODO: Refactor to React UI overlay components instead
-    const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    const button = Button.CreateSimpleButton(
+
+    const toggleUIButton = Button.CreateSimpleButton(
+      "toggleUIButton",
+      "Toggle UI"
+    );
+    toggleUIButton.color = "white";
+    toggleUIButton.background = "black";
+    toggleUIButton.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
+    toggleUIButton.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
+    toggleUIButton.width = "160px";
+    toggleUIButton.height = "40px";
+    toggleUIButton.top = -parseFloat(toggleUIButton.height) + 10 + "px";
+    toggleUIButton.left = "10px";
+    toggleUIButton.onPointerUpObservable.add(() => {
+      //TODO: UIOverlay.toggleVisibilty or equivalent
+    });
+
+    const toggleAudioButton = Button.CreateSimpleButton(
       "toggleAudioButton",
       "Toggle Star Audio"
     );
-    button.color = "white";
-    button.background = "black";
-    button.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
-    button.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
-    button.width = "160px";
-    button.height = "40px";
-    button.top = -parseFloat(button.height) + 10 + "px";
-    button.left = "10px";
-    button.onPointerUpObservable.add(() => {
+    toggleAudioButton.color = "white";
+    toggleAudioButton.background = "black";
+    toggleAudioButton.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
+    toggleAudioButton.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
+    toggleAudioButton.width = "160px";
+    toggleAudioButton.height = "40px";
+    toggleAudioButton.top = -parseFloat(toggleAudioButton.height) + 10 + "px";
+    toggleAudioButton.left = "200px";
+    toggleAudioButton.onPointerUpObservable.add(() => {
       this.starEffect.toggleAudio();
     });
-    advancedTexture.addControl(button);
+
+    const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    advancedTexture.addControl(toggleUIButton);
+    advancedTexture.addControl(toggleAudioButton);
   }
 
   public update() {
@@ -274,6 +293,7 @@ export class SceneManager {
       { mass: 1 },
       this.scene
     );*/
+
     terrain.physicsImpostor = new PhysicsImpostor(
       terrain,
       PhysicsImpostor.PlaneImpostor,

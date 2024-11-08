@@ -46,7 +46,7 @@ const useStyles = makeStyles({
     backgroundSize: "cover",
     ...shorthands.borderRadius("4px"),
     width: "800px", // Full width of texture
-    maxHeight: "50vh",
+    maxHeight: "70vh",
     overflowY: "auto",
     ...shorthands.border("3px", "solid", "brown"), // Add this line for border
   },
@@ -95,6 +95,7 @@ const UIOverlay: React.FC = () => {
 
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
+  const [isVisible, setIsVisible] = useState(true); // State to control visibility
   const hasInitialized = useRef(false);
   const {
     voices,
@@ -361,32 +362,40 @@ const UIOverlay: React.FC = () => {
     recognition.start();
   };
 
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
+
   return (
-    <div className={styles.overlayContainer}>
-      <h1 className={styles.title}>Gentleman's Inquiry Desk</h1>
-      <SpeechRecognitionButton
-        onClick={handleSpeechRecognition}
-        onError={function (error: string): void {
-          throw new Error("Function not implemented: " + error);
-        }}
-      />
-      <InputSelect
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        handleButtonClick={handleButtonClick}
-      />
-      <VoiceSelector
-        selectedVoice={selectedVoice}
-        setSelectedVoice={setSelectedVoice}
-        voices={voices}
-        isVoiceEnabled={isVoiceEnabled}
-        setIsVoiceEnabled={setIsVoiceEnabled}
-      />
-      <div className={styles.conversationContainer}>
-        <ConversationMessages conversation={conversation || []} />
-        <div ref={conversationEndRef} />
-      </div>
-    </div>
+    <>
+      {isVisible && (
+        <div className={styles.overlayContainer}>
+          <h1 className={styles.title}>Gentleman's Inquiry Desk</h1>
+          <SpeechRecognitionButton
+            onClick={handleSpeechRecognition}
+            onError={function (error: string): void {
+              throw new Error("Function not implemented: " + error);
+            }}
+          />
+          <InputSelect
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleButtonClick={handleButtonClick}
+          />
+          <VoiceSelector
+            selectedVoice={selectedVoice}
+            setSelectedVoice={setSelectedVoice}
+            voices={voices}
+            isVoiceEnabled={isVoiceEnabled}
+            setIsVoiceEnabled={setIsVoiceEnabled}
+          />
+          <div className={styles.conversationContainer}>
+            <ConversationMessages conversation={conversation || []} />
+            <div ref={conversationEndRef} />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ const useVoice = () => {
   const [selectedVoice, setSelectedVoice] = useState("");
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
     const populateVoices = () => {
@@ -65,6 +66,15 @@ const useVoice = () => {
     utterance.pitch = pitch; //TODO: Doesn't seem to work
     utterance.rate = rate;
 
+    utterance.onstart = () => {
+      console.log("Utterance started");
+      setIsSpeaking(true);
+    };
+    utterance.onend = () => {
+      console.log("Utterance ended");
+      setIsSpeaking(false);
+    };
+
     console.log(
       "SpeakText - VoiceName: " +
         voiceName +
@@ -93,6 +103,7 @@ const useVoice = () => {
     setIsVoiceEnabled,
     speakText,
     stopTalking,
+    isSpeaking,
   };
 };
 
