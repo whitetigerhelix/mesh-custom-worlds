@@ -188,12 +188,6 @@ export class StarEffect {
     } else {
       this.stopAudio();
     }
-
-    this.sound.onended = () => {
-      this.oscillator.stop();
-      this.oscillator2.stop();
-      this.lfo.stop();
-    };
   }
 
   public isAudioPlaying() {

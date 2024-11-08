@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   overlayContainer: {
     position: "absolute",
     top: "10px",
-    left: "10px",
+    left: "0px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -45,9 +45,10 @@ const useStyles = makeStyles({
     backgroundImage: "url('/textures/ui_background.jpg')",
     backgroundSize: "cover",
     ...shorthands.borderRadius("4px"),
-    width: "40%", // Full width of texture
+    width: "800px", // Full width of texture
     maxHeight: "50vh",
     overflowY: "auto",
+    ...shorthands.border("3px", "solid", "brown"), // Add this line for border
   },
   conversationContainer: {
     display: "flex",
