@@ -391,11 +391,6 @@ const UIOverlay: React.FC = () => {
             isVoiceEnabled={isVoiceEnabled}
             setIsVoiceEnabled={setIsVoiceEnabled}
           />
-          <VoiceReactiveMesh
-            isSpeaking={isSpeaking}
-            speakText={speakText}
-            stopTalking={stopTalking}
-          />
           <div className={styles.conversationContainer}>
             <ConversationMessages conversation={conversation || []} />
             <div ref={conversationEndRef} />
