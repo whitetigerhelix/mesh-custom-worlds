@@ -26,7 +26,7 @@ const SpeechRecognitionButton: React.FC<SpeechRecognitionButtonProps> = ({
       icon={<Mic24Filled />}
       onClick={handleClick}
       aria-label="Commence Auditory Reception"
-      style={{ margin: "10px" }}
+      style={{ margin: "10px", fontSize: "1.5rem", padding: "10px" }}
     >
       Commence Auditory Reception
     </Button>

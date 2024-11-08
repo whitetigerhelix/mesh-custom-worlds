@@ -45,7 +45,7 @@ const useStyles = makeStyles({
     backgroundImage: "url('/textures/ui_background.jpg')",
     backgroundSize: "cover",
     ...shorthands.borderRadius("4px"),
-    width: "60%", // Full width of texture
+    width: "40%", // Full width of texture
     maxHeight: "50vh",
     overflowY: "auto",
   },

@@ -19,6 +19,8 @@ const useStyles = makeStyles({
     ...shorthands.padding("10px"),
     ...shorthands.borderRadius("20px"),
     marginBottom: "10px",
+    marginLeft: "10px",
+    marginRight: "10px",
     transition: "transform 0.3s ease, opacity 0.3s ease, padding 0.3s ease",
     opacity: 0.7,
     "&:hover": {
