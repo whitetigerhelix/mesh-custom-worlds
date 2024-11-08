@@ -43,7 +43,7 @@ const InputSection: React.FC<InputSectionProps> = ({
       <Button
         onClick={handleButtonClick}
         aria-label="Print input to console"
-        style={{ margin: "10px", fontSize: "1.5rem", padding: "10px" }}
+        style={{ margin: "10px", fontSize: "2.2rem", padding: "10px" }}
         icon={<span aria-hidden="true">🧐</span>}
       >
         Dispatch Thy Query

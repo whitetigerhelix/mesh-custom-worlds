@@ -81,7 +81,7 @@ const SceneManager: React.FC = () => {
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.disableLighting = true;
     skyboxMaterial.reflectionTexture = new CubeTexture(
-      "/textures/space_sky",
+      "/textures/space_sky", //darkskies_sky
       scene
     );
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
