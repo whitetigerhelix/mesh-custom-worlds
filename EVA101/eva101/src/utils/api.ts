@@ -77,10 +77,17 @@ const handleResponse = async (
         assistantMessage.textResponse
       );
 
+//TODO: This should come from the response itself
+      const assistantMood = assistantMessage.mood || "neutral"; // Assuming the mood is part of the response
+
       if (isVoiceEnabled) {
-        speakText(assistantMessage.textResponse, selectedVoice);
+        speakText(assistantMessage.textResponse, selectedVoice, assistantMood);
       }
-      await addToConversation("assistant", assistantMessage.textResponse);
+      await addToConversation(
+        "assistant",
+        assistantMessage.textResponse,
+        assistantMood
+      );
     } catch (error) {
       console.error("Error parsing assistant message:", error);
     }

@@ -1,16 +1,21 @@
 import React, { useRef } from "react";
-import { Textarea, Button } from "@fluentui/react-components";
+import { Textarea, Button, Select } from "@fluentui/react-components";
+import { moodOptions } from "./UIOverlay";
 
 interface InputSectionProps {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   handleButtonClick: () => void;
+  mood: string;
+  setMood: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const InputSection: React.FC<InputSectionProps> = ({
   inputValue,
   setInputValue,
   handleButtonClick,
+  mood,
+  setMood,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,6 +45,18 @@ const InputSection: React.FC<InputSectionProps> = ({
         aria-label="Input field for text"
         style={{ width: "100%", resize: "vertical", minHeight: "60px" }}
       />
+      <Select
+        value={mood}
+        onChange={(_, data) => setMood(data.value)}
+        aria-label="Select mood"
+        style={{ marginTop: "10px", width: "200px" }}
+      >
+        {moodOptions.map((option) => (
+          <option key={option.key} value={option.key}>
+            {option.text}
+          </option>
+        ))}
+      </Select>
       <Button
         onClick={handleButtonClick}
         aria-label="Print input to console"

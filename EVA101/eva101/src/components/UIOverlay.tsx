@@ -90,6 +90,22 @@ declare global {
   }
 }
 
+//TODO: More moods...
+export const moodOptions = [
+  { key: "neutral", text: "Neutral" },
+  { key: "happy", text: "Happy" },
+  { key: "excited", text: "Excited" },
+  { key: "sad", text: "Sad" },
+  { key: "angry", text: "Angry" },
+  { key: "frustrated", text: "Frustrated" },
+  { key: "annoyed", text: "Annoyed" },
+  { key: "Sarcastic", text: "Sarcastic" },
+  { key: "Pompous", text: "Pompous" },
+  { key: "Amused", text: "Amused" },
+  { key: "Cynical", text: "Cynical" },
+  { key: "Inquisitive", text: "Inquisitive" },
+];
+
 const UIOverlay: React.FC = () => {
   console.log("UIOverlay component rendered");
 
@@ -107,9 +123,11 @@ const UIOverlay: React.FC = () => {
     isSpeaking,
   } = useVoices();
 
+  const [mood, setMood] = useState("neutral");
+
   // Conversation is used to manage the conversation history displayed in the UI
   const [conversation, setConversation] = useState<
-    { role: "user" | "assistant"; content: string }[]
+    { role: "user" | "assistant"; content: string; mood: string }[]
   >([]);
 
   const [requestBody /*setRequestBody*/] = useState<RequestBody>({
@@ -150,13 +168,21 @@ const UIOverlay: React.FC = () => {
 
       if (!hasInitialized.current) {
         const initialGreeting = getRandomGreeting();
-        await addToConversation("assistant", initialGreeting);
+        await addToConversation(
+          "assistant",
+          initialGreeting.text,
+          initialGreeting.mood
+        );
         hasInitialized.current = true;
 
         setIsVoiceEnabled(savedIsVoiceEnabled);
 
         if (savedIsVoiceEnabled) {
-          speakText(initialGreeting, savedVoice || "");
+          speakText(
+            initialGreeting.text,
+            initialGreeting.mood,
+            savedVoice || ""
+          );
         }
       }
     };
@@ -170,42 +196,48 @@ const UIOverlay: React.FC = () => {
 
   const addToConversation = async (
     role: "user" | "assistant",
-    content: string
+    content: string,
+    mood: string = "neutral"
   ) => {
     console.log(
-      "Adding to conversation - role: " + role + " | content: " + content
+      "Adding to conversation - role: " +
+        role +
+        " | content: " +
+        content +
+        " | mood: " +
+        mood
     );
 
     // Add the new message to the conversation
-    return new Promise<{ role: "user" | "assistant"; content: string }[]>(
-      (resolve) => {
-        setConversation((prev) => {
-          const updatedConversation = [...prev, { role, content }];
+    return new Promise<
+      { role: "user" | "assistant"; content: string; mood: string }[]
+    >((resolve) => {
+      setConversation((prev) => {
+        const updatedConversation = [...prev, { role, content, mood }];
 
-          // Debugging
-          console.trace(
-            "Updated Conversation with new message: \n{ " +
-              role +
-              ", " +
-              content +
-              " } \n\n" +
-              "Updated Conversation: \n" +
-              JSON.stringify(updatedConversation, null, 2) +
-              "\n\n" +
-              "Updated Request body: \n" +
-              JSON.stringify(
-                updateRequestBody(requestBody, updatedConversation),
-                null,
-                2
-              )
-          );
+        // Debugging
+        console.trace(
+          "Updated Conversation with new message: \n{ " +
+            role +
+            ", " +
+            content +
+            " } \n\n" +
+            "Updated Conversation: \n" +
+            JSON.stringify(updatedConversation, null, 2) +
+            "\n\n" +
+            "Updated Request body: \n" +
+            JSON.stringify(
+              updateRequestBody(requestBody, updatedConversation),
+              null,
+              2
+            )
+        );
 
-          resolve(updatedConversation);
+        resolve(updatedConversation);
 
-          return updatedConversation;
-        });
-      }
-    );
+        return updatedConversation;
+      });
+    });
   };
 
   const handleButtonClick = async () => {
@@ -213,7 +245,9 @@ const UIOverlay: React.FC = () => {
     console.log("User asks assistant the following: ", userQuery);
 
     stopTalking();
-    const updatedConvo = await addToConversation("user", userQuery);
+
+    const updatedConvo = await addToConversation("user", userQuery); //TODO: Add mood
+
     await sendPostRequest(
       updatedConvo,
       requestBody,

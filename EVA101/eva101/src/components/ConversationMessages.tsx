@@ -52,10 +52,49 @@ const useStyles = makeStyles({
     ...shorthands.padding("0px"),
     ...shorthands.margin("0px"),
   },
+  moodLabel: {
+    display: "block",
+    fontSize: "0.8em",
+    color: "#FFD700",
+    marginTop: "5px",
+  },
+  happy: {
+    backgroundColor: "#FFD700",
+  },
+  sad: {
+    backgroundColor: "#1E90FF",
+  },
+  angry: {
+    backgroundColor: "#FF4500",
+  },
+  frustrated: {
+    backgroundColor: "#FF6347",
+  },
+  annoyed: {
+    backgroundColor: "#FFA500",
+  },
+  sarcastic: {
+    backgroundColor: "#8A2BE2",
+  },
+  pompous: {
+    backgroundColor: "#DAA520",
+  },
+  amused: {
+    backgroundColor: "#FF69B4",
+  },
+  cynical: {
+    backgroundColor: "#708090",
+  },
+  inquisitive: {
+    backgroundColor: "#00CED1",
+  },
+  neutral: {
+    backgroundColor: "#1e1e1e",
+  },
 });
 
 interface ConversationMessagesProps {
-  conversation: { role: "user" | "assistant"; content: string }[];
+  conversation: { role: "user" | "assistant"; content: string; mood: string }[];
 }
 
 const ConversationMessages: React.FC<ConversationMessagesProps> = ({
@@ -75,33 +114,35 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
               message.role === "user"
                 ? styles.userMessage
                 : styles.assistantMessage
-            } ${
-              index === 0 || index === 1
+            } ${styles[message.mood]} ${
+              index === conversation.length - 1 ||
+              index === conversation.length - 2
                 ? styles.highlightedMessage
                 : styles.collapsedMessage
             }`}
             onMouseEnter={(e) => {
-              if (index > 1) {
+              if (index < conversation.length - 2) {
                 const element = e.currentTarget;
                 element.className = `${styles.message} ${
                   message.role === "user"
                     ? styles.userMessage
                     : styles.assistantMessage
-                } ${styles.highlightedMessage}`;
+                } ${styles[message.mood]} ${styles.highlightedMessage}`;
               }
             }}
             onMouseLeave={(e) => {
-              if (index > 1) {
+              if (index < conversation.length - 2) {
                 const element = e.currentTarget;
                 element.className = `${styles.message} ${
                   message.role === "user"
                     ? styles.userMessage
                     : styles.assistantMessage
-                } ${styles.collapsedMessage}`;
+                } ${styles[message.mood]} ${styles.collapsedMessage}`;
               }
             }}
           >
-            {message.content}
+            <span>{message.content}</span>
+            <span className={styles.moodLabel}>Mood: {message.mood}</span>
           </div>
         ))}
     </div>

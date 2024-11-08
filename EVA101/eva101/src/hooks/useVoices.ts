@@ -42,12 +42,10 @@ const useVoice = () => {
       }
     });
 
-  const speakText = async (
-    text: string,
-    voiceName: string,
-    pitch: number = 1.0, // Lower pitch for deeper sound
-    rate: number = 1.3 // Higher rate for quicker speech
-  ) => {
+  const DEFAULT_PITCH = 1.0; // Default pitch (lower for deeper sound)
+  const DEFAULT_RATE = 1.3; // Default rate (higher rate for quicker speech)
+
+  const speakText = async (text: string, voiceName: string, mood: string) => {
     if (currentUtterance.current) {
       speechSynthesis.cancel();
     }
@@ -61,6 +59,29 @@ const useVoice = () => {
       .find((voice) => voice.name === voiceName);
     if (selectedVoice) {
       utterance.voice = selectedVoice;
+    }
+
+    // Adjust pitch and rate based on mood
+    //TODO: Support more moods
+    let pitch = DEFAULT_PITCH;
+    let rate = DEFAULT_RATE;
+    switch (mood) {
+      case "happy":
+        pitch = DEFAULT_PITCH + 0.5;
+        rate = DEFAULT_RATE + 0.2;
+        break;
+      case "sad":
+        pitch = DEFAULT_PITCH - 0.2;
+        rate = DEFAULT_RATE - 0.2;
+        break;
+      case "angry":
+        pitch = DEFAULT_PITCH + 0.2;
+        rate = DEFAULT_RATE + 0.5;
+        break;
+      /*default:
+        pitch = DEFAULT_RATE;
+        rate = DEFAULT_RATE;
+        break;*/
     }
 
     utterance.pitch = pitch; //TODO: Doesn't seem to work
@@ -80,6 +101,8 @@ const useVoice = () => {
         voiceName +
         " | Selected voice:" +
         selectedVoice +
+        " | Mood: " +
+        mood +
         " | Pitch: " +
         pitch +
         ", Rate: " +
