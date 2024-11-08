@@ -208,36 +208,53 @@ const SceneManager: React.FC = () => {
 
     const toggleUIButton = Button.CreateSimpleButton(
       "toggleUIButton",
-      "Toggle UI"
+      "☠️ Dismiss the Scholarly Aide"
     );
     toggleUIButton.color = "white";
     toggleUIButton.background = "black";
     toggleUIButton.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
     toggleUIButton.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
-    toggleUIButton.width = "160px";
-    toggleUIButton.height = "40px";
-    toggleUIButton.top = -parseFloat(toggleUIButton.height) + 10 + "px";
+    toggleUIButton.width = "300px";
+    toggleUIButton.height = "50px";
+    toggleUIButton.top = -parseFloat(toggleUIButton.height) + 20 + "px";
     toggleUIButton.left = "10px";
     toggleUIButton.onPointerUpObservable.add(() => {
-      setIsUIVisible((prevState) => !prevState);
-      console.log("Toggled UI visibility");
+      setIsUIVisible((prevState) => {
+        const visible = !prevState;
+
+        if (toggleUIButton.textBlock) {
+          toggleUIButton.textBlock.text = visible
+            ? "☠️ Dismiss the Scholarly Aide"
+            : "🧐 Summon the Scholarly Aide";
+        }
+
+        console.log("Toggled UI visibility: ", visible);
+        return visible;
+      });
     });
 
     const toggleAudioButton = Button.CreateSimpleButton(
       "toggleAudioButton",
-      "Toggle Audio"
+      starEffect.isAudioPlaying() ? "🔊 Audio Enabled" : "🔇 Audio Muted"
     );
     toggleAudioButton.color = "white";
     toggleAudioButton.background = "black";
     toggleAudioButton.horizontalAlignment = Button.HORIZONTAL_ALIGNMENT_LEFT;
     toggleAudioButton.verticalAlignment = Button.VERTICAL_ALIGNMENT_BOTTOM;
-    toggleAudioButton.width = "160px";
-    toggleAudioButton.height = "40px";
-    toggleAudioButton.top = -parseFloat(toggleAudioButton.height) + 10 + "px";
-    toggleAudioButton.left = "200px";
+    toggleAudioButton.width = "200px";
+    toggleAudioButton.height = "50px";
+    toggleAudioButton.top = -parseFloat(toggleAudioButton.height) + 20 + "px";
+    toggleAudioButton.left = "350px";
     toggleAudioButton.onPointerUpObservable.add(() => {
-      console.log("Toggling star audio");
-      starEffect.toggleAudio();
+      const playing = starEffect.toggleAudio();
+
+      console.log("Toggling star audio player: ", playing);
+
+      if (toggleAudioButton.textBlock) {
+        toggleAudioButton.textBlock.text = playing
+          ? "🔊 Audio Enabled"
+          : "🔇 Audio Muted";
+      }
     });
 
     const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");

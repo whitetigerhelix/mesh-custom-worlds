@@ -197,8 +197,10 @@ export class StarEffect {
   public toggleAudio() {
     if (this.isAudioPlaying()) {
       this.stopAudio();
+      return false;
     } else {
       this.startAudio();
+      return true;
     }
   }
 

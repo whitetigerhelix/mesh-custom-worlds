@@ -8,9 +8,9 @@ import ConversationMessages from "./ConversationMessages";
 import useVoices from "../hooks/useVoices";
 import SpeechRecognitionButton from "./SpeechRecognitionButton";
 import {
-  AGENT_INITIAL_GREETING,
   initialChatHistory,
   updateRequestBody,
+  getRandomGreeting,
 } from "../utils/agent";
 import { sendPostRequest } from "../utils/api";
 
@@ -149,13 +149,14 @@ const UIOverlay: React.FC = () => {
       );
 
       if (!hasInitialized.current) {
-        await addToConversation("assistant", AGENT_INITIAL_GREETING);
+        const initialGreeting = getRandomGreeting();
+        await addToConversation("assistant", initialGreeting);
         hasInitialized.current = true;
 
         setIsVoiceEnabled(savedIsVoiceEnabled);
 
         if (savedIsVoiceEnabled) {
-          speakText(AGENT_INITIAL_GREETING, savedVoice || "");
+          speakText(initialGreeting, savedVoice || "");
         }
       }
     };
