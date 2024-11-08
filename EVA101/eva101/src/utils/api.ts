@@ -1,4 +1,4 @@
-import { RequestBody, LLMResponse, AssistantMessage } from "../types";
+import { RequestBody, AssistantMessage, LLMResponse } from "../types";
 import { updateRequestBody } from "./agent";
 
 export const sendPostRequest = async (
@@ -74,19 +74,32 @@ const handleResponse = async (
 
   if (data.response.choices && data.response.choices.length > 0) {
     const assistantMessageContent = data.response.choices[0].message.content;
-    const assistantMood = data.response.choices[0].message.mood;
     try {
       const assistantMessage: AssistantMessage = JSON.parse(
         assistantMessageContent
       );
 
+      // Extract mood from the text response which is in the format "<mood> Message"
+      const moodMatch = assistantMessage.textResponse.match(/^<([^>]+)> (.*)$/);
+      let assistantResponse = assistantMessage.textResponse;
+      let assistantMood = "neutral";
+
+      if (moodMatch) {
+        assistantMood = moodMatch[1];
+        assistantResponse = moodMatch[2];
+      }
+
       console.log(
-        "Assistant's response message:",
-        assistantMessage.textResponse
+        "Handling Assistant's full response message: " +
+          assistantMessage.textResponse +
+          "\nMood: " +
+          assistantMood +
+          "\nAgent response: " +
+          assistantResponse
       );
 
       if (isVoiceEnabled) {
-        speakText(assistantMessage.textResponse, selectedVoice, assistantMood);
+        speakText(assistantResponse, selectedVoice, assistantMood);
       }
       await addToConversation(
         "assistant",
