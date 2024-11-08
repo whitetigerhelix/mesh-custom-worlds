@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Textarea, Button, Select } from "@fluentui/react-components";
-import { moodOptions } from "./UIOverlay";
+import { moodOptions } from "./../utils/mood";
 
 interface InputSectionProps {
   inputValue: string;

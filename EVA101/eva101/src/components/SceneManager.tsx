@@ -6,6 +6,7 @@ import cannon from "cannon";
 import { AdvancedDynamicTexture } from "@babylonjs/gui";
 import { Button } from "@babylonjs/gui";
 import UIOverlay from "./UIOverlay";
+import VoiceReactiveEffect from "./VoiceReactiveEffect";
 import { makeStyles } from "@fluentui/react-components";
 import {
   Engine,
@@ -39,6 +40,7 @@ const SceneManager: React.FC = () => {
   const moveUpRef = useRef<boolean>(false);
   const moveDownRef = useRef<boolean>(false);
   const [isUIVisible, setIsUIVisible] = useState<boolean>(true);
+  const voiceReactiveEffectRef = useRef<VoiceReactiveEffect | null>(null);
 
   const CAMERA_SPEED = 1.0;
   const CAMERA_VERTICAL_SPEED_FACTOR = 0.1;
@@ -93,6 +95,13 @@ const SceneManager: React.FC = () => {
     const planet = new Planet(scene, glowLayer, skyboxMaterial);
     const starEffect = new StarEffect(scene, audioContext, glowLayer);
     starEffect.addShadowCaster(planet.mesh);
+
+    // Create the voice reactive effect
+    const voiceReactiveEffect = new VoiceReactiveEffect(scene, skyboxMaterial);
+    voiceReactiveEffectRef.current = voiceReactiveEffect;
+    voiceReactiveEffect.setPosition(
+      new Vector3(0, planet.mesh.position.y + 3, 0)
+    );
 
     //TODO: This should be own class eventually
     const createTerrain = () => {
@@ -195,6 +204,7 @@ const SceneManager: React.FC = () => {
 
       planet.update();
       starEffect.update();
+      voiceReactiveEffect.update();
     };
 
     // Set up the render loop update

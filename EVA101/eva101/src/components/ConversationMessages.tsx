@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles, shorthands } from "@fluentui/react-components";
-import { moodOptions } from "./UIOverlay";
+import { moodOptions } from "./../utils/mood";
 
 const useStyles = makeStyles({
   container: {
