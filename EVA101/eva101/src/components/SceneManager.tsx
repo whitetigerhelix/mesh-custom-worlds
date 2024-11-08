@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Planet } from "../classes/Planet";
 import { StarEffect } from "../classes/StarEffect";
 import { Inspector } from "@babylonjs/inspector";
@@ -38,6 +38,7 @@ const SceneManager: React.FC = () => {
   const inspectorRef = useRef<boolean>(false);
   const moveUpRef = useRef<boolean>(false);
   const moveDownRef = useRef<boolean>(false);
+  const [isUIVisible, setIsUIVisible] = useState<boolean>(true);
 
   const CAMERA_SPEED = 1.0;
   const CAMERA_VERTICAL_SPEED_FACTOR = 0.1;
@@ -218,12 +219,13 @@ const SceneManager: React.FC = () => {
     toggleUIButton.top = -parseFloat(toggleUIButton.height) + 10 + "px";
     toggleUIButton.left = "10px";
     toggleUIButton.onPointerUpObservable.add(() => {
-      //TODO: UIOverlay.toggleVisibilty or equivalent
+      setIsUIVisible((prevState) => !prevState);
+      console.log("Toggled UI visibility");
     });
 
     const toggleAudioButton = Button.CreateSimpleButton(
       "toggleAudioButton",
-      "Toggle Star Audio"
+      "Toggle Audio"
     );
     toggleAudioButton.color = "white";
     toggleAudioButton.background = "black";
@@ -234,6 +236,7 @@ const SceneManager: React.FC = () => {
     toggleAudioButton.top = -parseFloat(toggleAudioButton.height) + 10 + "px";
     toggleAudioButton.left = "200px";
     toggleAudioButton.onPointerUpObservable.add(() => {
+      console.log("Toggling star audio");
       starEffect.toggleAudio();
     });
 
@@ -298,7 +301,7 @@ const SceneManager: React.FC = () => {
   return (
     <div className={styles.sceneContainer}>
       <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />
-      <UIOverlay />
+      {isUIVisible && <UIOverlay />}
     </div>
   );
 };

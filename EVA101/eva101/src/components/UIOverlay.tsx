@@ -95,7 +95,6 @@ const UIOverlay: React.FC = () => {
 
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
-  const [isVisible, setIsVisible] = useState(true); // State to control visibility
   const hasInitialized = useRef(false);
   const {
     voices,
@@ -162,7 +161,10 @@ const UIOverlay: React.FC = () => {
     };
 
     const timer = setTimeout(initialize, 150);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      stopTalking();
+    };
   }, [isVoiceEnabled]);
 
   const addToConversation = async (
@@ -246,39 +248,33 @@ const UIOverlay: React.FC = () => {
     recognition.start();
   };
 
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
   return (
     <>
-      {isVisible && (
-        <div className={styles.overlayContainer}>
-          <h1 className={styles.title}>Gentleman's Inquiry Desk</h1>
-          <SpeechRecognitionButton
-            onClick={handleSpeechRecognition}
-            onError={function (error: string): void {
-              throw new Error("Function not implemented: " + error);
-            }}
-          />
-          <InputSelect
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            handleButtonClick={handleButtonClick}
-          />
-          <VoiceSelector
-            selectedVoice={selectedVoice}
-            setSelectedVoice={setSelectedVoice}
-            voices={voices}
-            isVoiceEnabled={isVoiceEnabled}
-            setIsVoiceEnabled={setIsVoiceEnabled}
-          />
-          <div className={styles.conversationContainer}>
-            <ConversationMessages conversation={conversation || []} />
-            <div ref={conversationEndRef} />
-          </div>
+      <div className={styles.overlayContainer}>
+        <h1 className={styles.title}>Gentleman's Inquiry Desk</h1>
+        <SpeechRecognitionButton
+          onClick={handleSpeechRecognition}
+          onError={function (error: string): void {
+            throw new Error("Function not implemented: " + error);
+          }}
+        />
+        <InputSelect
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          handleButtonClick={handleButtonClick}
+        />
+        <VoiceSelector
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
+          voices={voices}
+          isVoiceEnabled={isVoiceEnabled}
+          setIsVoiceEnabled={setIsVoiceEnabled}
+        />
+        <div className={styles.conversationContainer}>
+          <ConversationMessages conversation={conversation || []} />
+          <div ref={conversationEndRef} />
         </div>
-      )}
+      </div>
     </>
   );
 };
