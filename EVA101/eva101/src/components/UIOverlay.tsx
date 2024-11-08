@@ -263,10 +263,11 @@ const UIOverlay: React.FC = () => {
   };
 
   const handleButtonClick = async () => {
-    console.log("User asks assistant the following: ", inputValue);
+    const userQuery = inputValue || "...";
+    console.log("User asks assistant the following: ", userQuery);
 
     stopTalking();
-    const updatedConvo = await addToConversation("user", inputValue);
+    const updatedConvo = await addToConversation("user", userQuery);
     await sendPostRequest(updatedConvo);
 
     // Clear the input field for next query
