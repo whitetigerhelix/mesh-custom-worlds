@@ -8,7 +8,7 @@ const useStyles = makeStyles({
     ...shorthands.padding("20px"),
     ...shorthands.borderRadius("8px"),
     display: "flex",
-    flexDirection: "column-reverse", // Change to column-reverse for reversed order
+    flexDirection: "column",
     gap: "10px",
     maxHeight: "50vh",
     overflowY: "auto",
@@ -108,51 +108,47 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
 
   return (
     <div className={styles.container}>
-      {conversation
-        .slice()
-        .reverse()
-        .map((message, index) => (
-          <div
-            key={index}
-            className={`${styles.message} ${
-              message.role === "user"
-                ? styles.userMessage
-                : styles.assistantMessage
-            } ${styles[message.mood as keyof typeof styles]} ${
-              index === conversation.length - 1 ||
-              index === conversation.length - 2
-                ? styles.highlightedMessage
-                : styles.collapsedMessage
-            }`}
-            onMouseEnter={(e) => {
-              if (index < conversation.length - 2) {
-                const element = e.currentTarget;
-                element.className = `${styles.message} ${
-                  message.role === "user"
-                    ? styles.userMessage
-                    : styles.assistantMessage
-                } ${styles[message.mood as keyof typeof styles]} ${
-                  styles.highlightedMessage
-                }`;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (index < conversation.length - 2) {
-                const element = e.currentTarget;
-                element.className = `${styles.message} ${
-                  message.role === "user"
-                    ? styles.userMessage
-                    : styles.assistantMessage
-                } ${styles[message.mood as keyof typeof styles]} ${
-                  styles.collapsedMessage
-                }`;
-              }
-            }}
-          >
-            <span>{message.content}</span>
-            <span className={styles.moodLabel}>Mood: {message.mood}</span>
-          </div>
-        ))}
+      {conversation.slice().map((message, index) => (
+        <div
+          key={index}
+          className={`${styles.message} ${
+            message.role === "user"
+              ? styles.userMessage
+              : styles.assistantMessage
+          } ${styles[message.mood as keyof typeof styles]} ${
+            index >= conversation.length - 2
+              ? styles.highlightedMessage
+              : styles.collapsedMessage
+          }`}
+          onMouseEnter={(e) => {
+            if (index < conversation.length - 2) {
+              const element = e.currentTarget;
+              element.className = `${styles.message} ${
+                message.role === "user"
+                  ? styles.userMessage
+                  : styles.assistantMessage
+              } ${styles[message.mood as keyof typeof styles]} ${
+                styles.highlightedMessage
+              }`;
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (index < conversation.length - 2) {
+              const element = e.currentTarget;
+              element.className = `${styles.message} ${
+                message.role === "user"
+                  ? styles.userMessage
+                  : styles.assistantMessage
+              } ${styles[message.mood as keyof typeof styles]} ${
+                styles.collapsedMessage
+              }`;
+            }
+          }}
+        >
+          <span>{message.content}</span>
+          <span className={styles.moodLabel}>Mood: {message.mood}</span>
+        </div>
+      ))}
     </div>
   );
 };

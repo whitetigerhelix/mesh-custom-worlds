@@ -81,7 +81,7 @@ const handleResponse = async (
 
       // Extract mood from the text response which is in the format "<mood> Message"
       const moodMatch = assistantMessage.textResponse.match(/^<([^>]+)> (.*)$/);
-      let assistantResponse = assistantMessage.textResponse;
+      let assistantResponse = "...";
       let assistantMood = "neutral";
 
       if (moodMatch) {
@@ -101,11 +101,7 @@ const handleResponse = async (
       if (isVoiceEnabled) {
         speakText(assistantResponse, selectedVoice, assistantMood);
       }
-      await addToConversation(
-        "assistant",
-        assistantMessage.textResponse,
-        assistantMood
-      );
+      await addToConversation("assistant", assistantResponse, assistantMood);
     } catch (error) {
       console.error("Error parsing assistant message:", error);
     }
