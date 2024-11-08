@@ -4,12 +4,13 @@ import { updateRequestBody } from "./agent";
 export const sendPostRequest = async (
   updatedConvo: { role: "user" | "assistant"; content: string }[],
   requestBody: RequestBody,
-  speakText: (text: string, voiceName: string) => void,
+  speakText: (text: string, voiceName: string, mood: string) => void,
   selectedVoice: string,
   isVoiceEnabled: boolean,
   addToConversation: (
     role: "user" | "assistant",
-    content: string
+    content: string,
+    mood: string
   ) => Promise<{ role: "user" | "assistant"; content: string }[]>
 ) => {
   try {
@@ -48,19 +49,21 @@ export const sendPostRequest = async (
 
     await addToConversation(
       "assistant",
-      "My sincerest apologies, but it appears I am unable to fulfill your request at this moment. I entreat you to exercise patience and attempt once more at a later juncture."
+      "My sincerest apologies, but it appears I am unable to fulfill your request at this moment. I entreat you to exercise patience and attempt once more at a later juncture.",
+      "sad"
     );
   }
 };
 
 const handleResponse = async (
   data: LLMResponse,
-  speakText: (text: string, voiceName: string) => void,
+  speakText: (text: string, voiceName: string, mood: string) => void,
   selectedVoice: string,
   isVoiceEnabled: boolean,
   addToConversation: (
     role: "user" | "assistant",
-    content: string
+    content: string,
+    mood: string
   ) => Promise<{ role: "user" | "assistant"; content: string }[]>
 ) => {
   console.log("Handle Response data:", JSON.stringify(data, null, 2));
@@ -77,7 +80,7 @@ const handleResponse = async (
         assistantMessage.textResponse
       );
 
-//TODO: This should come from the response itself
+      //TODO: This should come from the response itself
       const assistantMood = assistantMessage.mood || "neutral"; // Assuming the mood is part of the response
 
       if (isVoiceEnabled) {

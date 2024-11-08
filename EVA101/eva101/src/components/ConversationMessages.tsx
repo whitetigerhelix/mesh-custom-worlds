@@ -94,7 +94,11 @@ const useStyles = makeStyles({
 });
 
 interface ConversationMessagesProps {
-  conversation: { role: "user" | "assistant"; content: string; mood: string }[];
+  conversation: {
+    role: "user" | "assistant";
+    content: string;
+    mood: string;
+  }[];
 }
 
 const ConversationMessages: React.FC<ConversationMessagesProps> = ({
@@ -114,7 +118,7 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
               message.role === "user"
                 ? styles.userMessage
                 : styles.assistantMessage
-            } ${styles[message.mood]} ${
+            } ${styles[message.mood as keyof typeof styles]} ${
               index === conversation.length - 1 ||
               index === conversation.length - 2
                 ? styles.highlightedMessage
@@ -127,7 +131,9 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
                   message.role === "user"
                     ? styles.userMessage
                     : styles.assistantMessage
-                } ${styles[message.mood]} ${styles.highlightedMessage}`;
+                } ${styles[message.mood as keyof typeof styles]} ${
+                  styles.highlightedMessage
+                }`;
               }
             }}
             onMouseLeave={(e) => {
@@ -137,7 +143,9 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
                   message.role === "user"
                     ? styles.userMessage
                     : styles.assistantMessage
-                } ${styles[message.mood]} ${styles.collapsedMessage}`;
+                } ${styles[message.mood as keyof typeof styles]} ${
+                  styles.collapsedMessage
+                }`;
               }
             }}
           >

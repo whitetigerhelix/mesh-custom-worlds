@@ -99,11 +99,11 @@ export const moodOptions = [
   { key: "angry", text: "Angry" },
   { key: "frustrated", text: "Frustrated" },
   { key: "annoyed", text: "Annoyed" },
-  { key: "Sarcastic", text: "Sarcastic" },
-  { key: "Pompous", text: "Pompous" },
-  { key: "Amused", text: "Amused" },
-  { key: "Cynical", text: "Cynical" },
-  { key: "Inquisitive", text: "Inquisitive" },
+  { key: "sarcastic", text: "Sarcastic" },
+  { key: "pompous", text: "Pompous" },
+  { key: "amused", text: "Amused" },
+  { key: "cynical", text: "Cynical" },
+  { key: "inquisitive", text: "Inquisitive" },
 ];
 
 const UIOverlay: React.FC = () => {
@@ -120,14 +120,17 @@ const UIOverlay: React.FC = () => {
     setIsVoiceEnabled,
     speakText,
     stopTalking,
-    isSpeaking,
   } = useVoices();
 
   const [mood, setMood] = useState("neutral");
 
   // Conversation is used to manage the conversation history displayed in the UI
   const [conversation, setConversation] = useState<
-    { role: "user" | "assistant"; content: string; mood: string }[]
+    {
+      role: "user" | "assistant";
+      content: string;
+      mood: string;
+    }[]
   >([]);
 
   const [requestBody /*setRequestBody*/] = useState<RequestBody>({
@@ -197,7 +200,7 @@ const UIOverlay: React.FC = () => {
   const addToConversation = async (
     role: "user" | "assistant",
     content: string,
-    mood: string = "neutral"
+    mood: string //= "neutral"
   ) => {
     console.log(
       "Adding to conversation - role: " +
@@ -246,7 +249,7 @@ const UIOverlay: React.FC = () => {
 
     stopTalking();
 
-    const updatedConvo = await addToConversation("user", userQuery); //TODO: Add mood
+    const updatedConvo = await addToConversation("user", userQuery, mood);
 
     await sendPostRequest(
       updatedConvo,
@@ -297,6 +300,8 @@ const UIOverlay: React.FC = () => {
           inputValue={inputValue}
           setInputValue={setInputValue}
           handleButtonClick={handleButtonClick}
+          mood={mood}
+          setMood={setMood}
         />
         <VoiceSelector
           selectedVoice={selectedVoice}
