@@ -92,18 +92,18 @@ declare global {
 
 //TODO: More moods...
 export const moodOptions = [
-  { key: "neutral", text: "Neutral" },
-  { key: "happy", text: "Happy" },
-  { key: "excited", text: "Excited" },
-  { key: "sad", text: "Sad" },
-  { key: "angry", text: "Angry" },
-  { key: "frustrated", text: "Frustrated" },
-  { key: "annoyed", text: "Annoyed" },
-  { key: "sarcastic", text: "Sarcastic" },
-  { key: "pompous", text: "Pompous" },
-  { key: "amused", text: "Amused" },
-  { key: "cynical", text: "Cynical" },
-  { key: "inquisitive", text: "Inquisitive" },
+  { key: "neutral", text: "😐 Neutral" },
+  { key: "happy", text: "😊 Happy" },
+  { key: "excited", text: "😃 Excited" },
+  { key: "sad", text: "😭 Sad" },
+  { key: "angry", text: "😠 Angry" },
+  { key: "frustrated", text: "😤 Frustrated" },
+  { key: "annoyed", text: "😒 Annoyed" },
+  { key: "sarcastic", text: "🤨 Sarcastic" },
+  { key: "pompous", text: "🧐 Pompous" },
+  { key: "amused", text: "🤭 Amused" },
+  { key: "cynical", text: "😬 Cynical" },
+  { key: "inquisitive", text: "🤔 Inquisitive" },
 ];
 
 const UIOverlay: React.FC = () => {

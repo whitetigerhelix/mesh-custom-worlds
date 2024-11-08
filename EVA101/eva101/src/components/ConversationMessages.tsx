@@ -1,5 +1,6 @@
 import React from "react";
 import { makeStyles, shorthands } from "@fluentui/react-components";
+import { moodOptions } from "./UIOverlay";
 
 const useStyles = makeStyles({
   container: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles({
     overflowY: "auto",
   },
   message: {
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#2e2e2e",
     color: "#ffffff",
     ...shorthands.padding("10px"),
     ...shorthands.borderRadius("20px"),
@@ -30,12 +31,12 @@ const useStyles = makeStyles({
   },
   userMessage: {
     alignSelf: "flex-end",
-    backgroundColor: "blue",
+    backgroundColor: "#3b5998",
     opacity: 1,
   },
   assistantMessage: {
     alignSelf: "flex-start",
-    backgroundColor: "green",
+    backgroundColor: "#4b8b3b",
     opacity: 1,
   },
   highlightedMessage: {
@@ -89,7 +90,7 @@ const useStyles = makeStyles({
     backgroundColor: "#00CED1",
   },
   neutral: {
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#2e2e2e",
   },
 });
 
@@ -100,6 +101,11 @@ interface ConversationMessagesProps {
     mood: string;
   }[];
 }
+
+const getMoodText = (mood: string) => {
+  const moodOption = moodOptions.find((option) => option.key === mood);
+  return moodOption ? moodOption.text : mood;
+};
 
 const ConversationMessages: React.FC<ConversationMessagesProps> = ({
   conversation,
@@ -146,7 +152,9 @@ const ConversationMessages: React.FC<ConversationMessagesProps> = ({
           }}
         >
           <span>{message.content}</span>
-          <span className={styles.moodLabel}>Mood: {message.mood}</span>
+          <span className={styles.moodLabel}>
+            Mood: {getMoodText(message.mood)}
+          </span>
         </div>
       ))}
     </div>

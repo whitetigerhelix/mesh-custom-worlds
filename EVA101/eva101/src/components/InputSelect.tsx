@@ -45,26 +45,28 @@ const InputSection: React.FC<InputSectionProps> = ({
         aria-label="Input field for text"
         style={{ width: "100%", resize: "vertical", minHeight: "60px" }}
       />
-      <Select
-        value={mood}
-        onChange={(_, data) => setMood(data.value)}
-        aria-label="Select mood"
-        style={{ marginTop: "10px", width: "200px" }}
-      >
-        {moodOptions.map((option) => (
-          <option key={option.key} value={option.key}>
-            {option.text}
-          </option>
-        ))}
-      </Select>
-      <Button
-        onClick={handleButtonClick}
-        aria-label="Print input to console"
-        style={{ margin: "10px", fontSize: "2.2rem", padding: "10px" }}
-        icon={<span aria-hidden="true">🧐</span>}
-      >
-        Dispatch Thy Query
-      </Button>
+      <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+        <Select
+          value={mood}
+          onChange={(_, data) => setMood(data.value)}
+          aria-label="Select mood"
+          style={{ marginRight: "30px", width: "200px" }}
+        >
+          {moodOptions.map((option) => (
+            <option key={option.key} value={option.key}>
+              {option.text}
+            </option>
+          ))}
+        </Select>
+        <Button
+          onClick={handleButtonClick}
+          aria-label="Print input to console"
+          style={{ margin: "10px", fontSize: "2.2rem", padding: "10px" }}
+          icon={<span aria-hidden="true">🧐</span>}
+        >
+          Dispatch Thy Query
+        </Button>
+      </div>
     </>
   );
 };
