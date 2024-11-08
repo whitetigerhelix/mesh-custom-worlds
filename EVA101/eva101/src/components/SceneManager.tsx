@@ -8,6 +8,7 @@ import { Button } from "@babylonjs/gui";
 import UIOverlay from "./UIOverlay";
 import VoiceReactiveEffect from "./VoiceReactiveEffect";
 import { makeStyles } from "@fluentui/react-components";
+import useVoices from "../hooks/useVoices";
 import {
   Engine,
   Scene,
@@ -41,6 +42,22 @@ const SceneManager: React.FC = () => {
   const moveDownRef = useRef<boolean>(false);
   const [isUIVisible, setIsUIVisible] = useState<boolean>(true);
   const voiceReactiveEffectRef = useRef<VoiceReactiveEffect | null>(null);
+
+  const startVoiceEffect = (mood: string) => {
+    console.log("SceneManager.startVoiceEffect - mood: " + mood);
+    if (voiceReactiveEffectRef.current) {
+      voiceReactiveEffectRef.current.start(mood);
+    }
+  };
+
+  const stopVoiceEffect = () => {
+    console.log("SceneManager.stopVoiceEffect");
+    if (voiceReactiveEffectRef.current) {
+      voiceReactiveEffectRef.current.stop();
+    }
+  };
+
+  const { isSpeaking } = useVoices(startVoiceEffect, stopVoiceEffect);
 
   const CAMERA_SPEED = 1.0;
   const CAMERA_VERTICAL_SPEED_FACTOR = 0.1;
@@ -324,6 +341,17 @@ const SceneManager: React.FC = () => {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
+
+  // Control the voice reactive effect based on the speaking state
+  useEffect(() => {
+    if (voiceReactiveEffectRef.current) {
+      if (isSpeaking) {
+        voiceReactiveEffectRef.current.start("neutral"); // Default mood
+      } else {
+        voiceReactiveEffectRef.current.stop();
+      }
+    }
+  }, [isSpeaking]);
 
   return (
     <div className={styles.sceneContainer}>

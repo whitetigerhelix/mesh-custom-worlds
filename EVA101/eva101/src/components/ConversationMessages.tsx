@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     gap: "10px",
     maxHeight: "50vh",
-    overflowY: "auto",
+    overflowY: "scroll",
   },
   message: {
     backgroundColor: "#2e2e2e",

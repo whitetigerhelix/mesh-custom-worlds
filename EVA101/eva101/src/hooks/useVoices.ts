@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import VoiceReactiveEffect from "../components/VoiceReactiveEffect";
 import { getMoodParameters } from "../utils/mood";
 
-const useVoice = () => {
+const useVoice = (
+  startVoiceEffect: (mood: string) => void,
+  stopVoiceEffect: () => void
+) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState("");
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const voiceReactiveEffectRef = useRef<VoiceReactiveEffect | null>(null);
 
   useEffect(() => {
     const populateVoices = () => {
@@ -86,20 +87,14 @@ const useVoice = () => {
       console.log("SpeakText - Utterance started: " + text);
 
       setIsSpeaking(true);
-
-      if (voiceReactiveEffectRef.current) {
-        voiceReactiveEffectRef.current.start(mood);
-      }
+      startVoiceEffect(mood);
     };
 
     utterance.onend = () => {
       console.log("SpeakText - Utterance ended: " + text);
 
       setIsSpeaking(false);
-
-      if (voiceReactiveEffectRef.current) {
-        voiceReactiveEffectRef.current.stop();
-      }
+      stopVoiceEffect();
     };
 
     console.log(
@@ -123,10 +118,7 @@ const useVoice = () => {
     console.log("Voice stopped");
 
     speechSynthesis.cancel();
-
-    if (voiceReactiveEffectRef.current) {
-      voiceReactiveEffectRef.current.stop();
-    }
+    stopVoiceEffect();
   };
 
   return {

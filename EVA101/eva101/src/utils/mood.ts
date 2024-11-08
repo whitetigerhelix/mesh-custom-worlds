@@ -76,6 +76,9 @@ export const getMoodParameters = (mood: string) => {
       rate += 0.1;
       break;
 
+    case "neutral":
+      break;
+
     default:
       console.warn("SpeakText - Unknown mood: " + mood);
       break;

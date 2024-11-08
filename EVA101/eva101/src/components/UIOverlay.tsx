@@ -93,6 +93,14 @@ declare global {
 const UIOverlay: React.FC = () => {
   console.log("UIOverlay component rendered");
 
+  const startVoiceEffect = (mood: string) => {
+    console.log("UIOverlay.startVoiceEffect - mood: " + mood);
+  };
+
+  const stopVoiceEffect = () => {
+    console.log("UIOverlay.stopVoiceEffect");
+  };
+
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
   const hasInitialized = useRef(false);
@@ -104,7 +112,7 @@ const UIOverlay: React.FC = () => {
     setIsVoiceEnabled,
     speakText,
     stopTalking,
-  } = useVoices();
+  } = useVoices(startVoiceEffect, stopVoiceEffect);
 
   const [mood, setMood] = useState("neutral");
 
@@ -117,7 +125,7 @@ const UIOverlay: React.FC = () => {
     }[]
   >([]);
 
-  const [requestBody /*setRequestBody*/] = useState<RequestBody>({
+  const [requestBody] = useState<RequestBody>({
     chat_history: initialChatHistory,
     llm_params: {
       model: "dev-gpt-35-1106-chat-completions",
@@ -126,14 +134,6 @@ const UIOverlay: React.FC = () => {
       max_tokens: 150,
     },
   });
-
-  const conversationEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (conversationEndRef.current) {
-      conversationEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [conversation]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -296,7 +296,6 @@ const UIOverlay: React.FC = () => {
         />
         <div className={styles.conversationContainer}>
           <ConversationMessages conversation={conversation || []} />
-          <div ref={conversationEndRef} />
         </div>
       </div>
     </>
