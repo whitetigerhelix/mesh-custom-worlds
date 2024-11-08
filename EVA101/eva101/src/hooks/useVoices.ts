@@ -61,6 +61,13 @@ const useVoice = () => {
       utterance.voice = selectedVoice;
     }
 
+    console.log(
+      "SpeakText - voiceName: " +
+        voiceName +
+        ", Selected voice: " +
+        selectedVoice
+    );
+
     // Adjust pitch and rate based on mood
     //TODO: Support more moods
     let pitch = DEFAULT_PITCH;
@@ -88,11 +95,11 @@ const useVoice = () => {
     utterance.rate = rate;
 
     utterance.onstart = () => {
-      console.log("Utterance started");
+      console.log("SpeakText - Utterance started: " + text);
       setIsSpeaking(true);
     };
     utterance.onend = () => {
-      console.log("Utterance ended");
+      console.log("SpeakText - Utterance ended: " + text);
       setIsSpeaking(false);
     };
 

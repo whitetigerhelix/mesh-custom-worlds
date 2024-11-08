@@ -56,11 +56,11 @@ const useStyles = makeStyles({
   moodLabel: {
     display: "block",
     fontSize: "0.8em",
-    color: "#FFD700",
+    color: "#000",
     marginTop: "5px",
   },
   happy: {
-    backgroundColor: "#FFD700",
+    backgroundColor: "#8AD000",
   },
   sad: {
     backgroundColor: "#1E90FF",

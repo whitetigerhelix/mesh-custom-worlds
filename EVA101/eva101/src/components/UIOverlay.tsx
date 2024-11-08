@@ -183,8 +183,8 @@ const UIOverlay: React.FC = () => {
         if (savedIsVoiceEnabled) {
           speakText(
             initialGreeting.text,
-            initialGreeting.mood,
-            savedVoice || ""
+            savedVoice || "",
+            initialGreeting.mood
           );
         }
       }
