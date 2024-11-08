@@ -18,7 +18,16 @@ const InputSection: React.FC<InputSectionProps> = ({
     <>
       <label
         htmlFor="inputField"
-        style={{ color: "white", marginRight: "10px" }}
+        style={{
+          color: "white",
+          marginRight: "10px",
+          padding: "5px",
+          alignSelf: "start",
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: "1.5rem",
+          textShadow: "1px 1px 2px #000000",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+        }}
       >
         Present Your Dissertation Below, if You Please...
       </label>

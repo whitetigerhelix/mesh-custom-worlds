@@ -180,9 +180,15 @@ export class StarEffect {
     this.sound.attachToMesh(this.mesh);
 
     // Handle oscillator start/stop based on sound state
+    this.oscillator.start();
+    this.oscillator2.start();
+    this.lfo.start();
     if (this.autoStartSound) {
       this.startAudio();
+    } else {
+      this.stopAudio();
     }
+
     this.sound.onended = () => {
       this.oscillator.stop();
       this.oscillator2.stop();
@@ -202,18 +208,14 @@ export class StarEffect {
     }
   }
 
-  public startAudio() {
+  public async startAudio() {
+    console.log("Starting star audio");
     this.sound.play();
-    this.oscillator.start();
-    this.oscillator2.start();
-    this.lfo.start();
   }
 
   public stopAudio() {
+    console.log("Stopping star audio");
     this.sound.stop();
-    this.oscillator.stop();
-    this.oscillator2.stop();
-    this.lfo.stop();
   }
 
   public update() {

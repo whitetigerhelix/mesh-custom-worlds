@@ -56,11 +56,23 @@ const useStyles = makeStyles({
     maxHeight: "100%",
   },
   title: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: "2.5rem",
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: "3rem",
     color: "#FFD700",
     textShadow: "2px 2px 4px #000000",
     marginBottom: "20px",
+  },
+  buttonText: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: "1.2rem",
+    color: "#FFD700",
+    textShadow: "1px 1px 2px #000000",
+  },
+  labelText: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: "1rem",
+    color: "#FFD700",
+    textShadow: "1px 1px 2px #000000",
   },
 });
 
@@ -350,7 +362,7 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className={styles.overlayContainer}>
-      <h1 className={styles.title}>The Learned Companion</h1>
+      <h1 className={styles.title}>Gentleman's Inquiry Desk</h1>
       <SpeechRecognitionButton
         onClick={handleSpeechRecognition}
         onError={function (error: string): void {
