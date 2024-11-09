@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { getMoodParameters } from "../utils/mood";
 
-const useVoice = (
+const useVoices = (
   startVoiceEffect: (mood: string) => void,
   stopVoiceEffect: () => void
 ) => {
@@ -133,4 +133,4 @@ const useVoice = (
   };
 };
 
-export default useVoice;
+export default useVoices;

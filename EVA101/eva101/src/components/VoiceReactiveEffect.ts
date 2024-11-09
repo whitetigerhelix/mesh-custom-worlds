@@ -44,25 +44,24 @@ class VoiceReactiveEffect {
       { diameter: 1 },
       this.scene
     );
-    this.mesh.position = new Vector3(0, 5, 0); // Positioned 3 units above the planet mesh
+    //this.mesh.position = new Vector3(0, 0, 0);
     this.mesh.material = material;
-    this.mesh.setEnabled(false);
   }
 
   // Start reactivity, with specific mood
   public start(mood: string = "neutral") {
     console.log("VoiceReactiveEffect.start - Mood: " + mood);
+
     this.isActive = true;
     this.mood = mood;
     this.updateMesh();
-    this.mesh.setEnabled(true);
   }
 
   // Stop reactivity
   public stop() {
     console.log("VoiceReactiveEffect.stop");
+
     this.isActive = false;
-    this.mesh.setEnabled(false);
   }
 
   public setPosition(position: Vector3) {

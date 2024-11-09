@@ -81,6 +81,15 @@ const useStyles = makeStyles({
     color: "#FFD700",
     textShadow: "1px 1px 2px #000000",
   },
+  assistantSpeaking: {
+    width: "100%",
+    height: "10px",
+    backgroundColor: "#FFD700",
+    borderRadius: "5px",
+    transition: "transform 0.3s ease-in-out",
+    transformOrigin: "left",
+    transform: "scaleX(0.1)", // Initially not talking
+  },
 });
 
 declare global {
@@ -90,20 +99,36 @@ declare global {
   }
 }
 
-const UIOverlay: React.FC = () => {
+interface UIOverlayProps {
+  startVoiceEffectSceneManager: (mood: string) => void;
+  stopVoiceEffectSceneManager: () => void;
+}
+
+export const UIOverlay: React.FC<UIOverlayProps> = ({
+  startVoiceEffectSceneManager,
+  stopVoiceEffectSceneManager,
+}) => {
   console.log("UIOverlay component rendered");
-
-  const startVoiceEffect = (mood: string) => {
-    console.log("UIOverlay.startVoiceEffect - mood: " + mood);
-  };
-
-  const stopVoiceEffect = () => {
-    console.log("UIOverlay.stopVoiceEffect");
-  };
 
   const styles = useStyles();
   const [inputValue, setInputValue] = useState("");
   const hasInitialized = useRef(false);
+  const animatingElementRef = useRef<HTMLDivElement>(null);
+
+  const startVoiceEffect = (mood: string) => {
+    console.log("UIOverlay.startVoiceEffect - mood: " + mood);
+
+    startVoiceEffectSceneManager(mood);
+    animatingElementRef.current?.style.setProperty("transform", "scaleX(1)");
+  };
+
+  const stopVoiceEffect = () => {
+    console.log("UIOverlay.stopVoiceEffect");
+
+    stopVoiceEffectSceneManager();
+    animatingElementRef.current?.style.setProperty("transform", "scaleX(0.1)");
+  };
+
   const {
     voices,
     selectedVoice,
@@ -184,7 +209,7 @@ const UIOverlay: React.FC = () => {
   const addToConversation = async (
     role: "user" | "assistant",
     content: string,
-    mood: string //= "neutral"
+    mood: string
   ) => {
     console.log(
       "Adding to conversation - role: " +
@@ -287,6 +312,7 @@ const UIOverlay: React.FC = () => {
           mood={mood}
           setMood={setMood}
         />
+        <div className={styles.assistantSpeaking} ref={animatingElementRef} />
         <VoiceSelector
           selectedVoice={selectedVoice}
           setSelectedVoice={setSelectedVoice}
